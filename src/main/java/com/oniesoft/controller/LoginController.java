@@ -41,12 +41,10 @@ public class LoginController {
                      System.out.println("Ok");
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
                  }
-            String role = (userRole != null) ? userRole.getEmpRole() : "";
-
             final String jwt = jwtService.generateToken(authRequest.getEmpId());
 
             // Create an instance of AuthenticationResponse and return it in the ResponseEntity
-            AuthenticationResponse response = new AuthenticationResponse(jwt, role);
+            AuthenticationResponse response = new AuthenticationResponse(jwt, userRole);
             return ResponseEntity.ok(response);
 
         } else {

@@ -1,13 +1,15 @@
 package com.oniesoft.jwtresponse;
 
+import com.oniesoft.model.Register;
+
 public class AuthenticationResponse {
     private String jwt;
-    private String role;
+    private Register register;
 
     // Constructors, getters, and setters
-    public AuthenticationResponse(String jwt, String role) {
+    public AuthenticationResponse(String jwt, Register register) {
         this.jwt = jwt;
-        this.role = role;
+        this.register = register;
     }
 
     public String getJwt() {
@@ -18,19 +20,19 @@ public class AuthenticationResponse {
         this.jwt = jwt;
     }
 
-    public String getRole() {
-        return role;
+    public Register getRegister() {
+        return register;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRegister(Register register) {
+        this.register = register;
     }
 
     @Override
     public String toString() {
         return "AuthenticationResponse{" +
                 "jwt='" + jwt + '\'' +
-                ", role='" + role + '\'' +
+                ", register=" + register +
                 '}';
     }
 }
