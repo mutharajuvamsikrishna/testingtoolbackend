@@ -53,7 +53,7 @@ public class SecurityConfig {
                 })
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/register/v1/sendotp", "/register/v1/getallreg", "/register/v1/verifyOtp", "/register/v1/adminregister","/register/v1/verifyadminOtp", "/login/v1/authenticate", "/register/v1/loginoauth","/forgetaccount/**","/swagger-ui/**","/v3/api-docs/**","/swagger-ui/**","/dept/v1/getallroles","/regmode/v1/getselfregmode").permitAll()
+                .requestMatchers("/register/v1/**", "/login/v1/**","/forgetaccount/v1/**","/swagger-ui/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("**")
                 .authenticated().and()
