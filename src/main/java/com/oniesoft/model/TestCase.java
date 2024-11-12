@@ -2,7 +2,7 @@ package com.oniesoft.model;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.ManyToAny;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,10 +30,10 @@ public class TestCase {
 	private String feature;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-	
-	@ManyToOne
-	@JoinColumn(name="project_id")
 
-  private	Project project;
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	@JsonBackReference
+	private Project project;
 
 }

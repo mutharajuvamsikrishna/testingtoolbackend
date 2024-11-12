@@ -10,4 +10,5 @@ public interface TestCaseService {
     TestCase getTestCaseById(Long id);
     List<TestCase> getAllTestCases();
     void deleteTestCase(Long id);
+    List<TestCase> getAllTestCasesForProject(long projectID);
 }

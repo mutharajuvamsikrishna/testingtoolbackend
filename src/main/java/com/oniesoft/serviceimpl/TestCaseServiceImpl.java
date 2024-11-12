@@ -65,4 +65,10 @@ testCase.setProject(project);
         }
         testCaseRepository.deleteById(id);
     }
+
+	@Override
+	public List<TestCase> getAllTestCasesForProject(long projectID) {
+		
+		return testCaseRepository.findByProject_Id(projectID);
+	}
 }
