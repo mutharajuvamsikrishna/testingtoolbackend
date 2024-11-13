@@ -22,7 +22,7 @@ import lombok.Delegate;
 
 
 @RestController
-@RequestMapping("api/projects")
+@RequestMapping("/projects/v1")
 public class ProjectController {
 	
 	@Autowired

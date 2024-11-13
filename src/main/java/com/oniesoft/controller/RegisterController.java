@@ -54,7 +54,7 @@ public class RegisterController {
     }
 
 
-    @DeleteMapping("deleteregister")
+    @DeleteMapping("/deleteregister")
     public ResponseEntity<String> deleteRegister(@RequestParam int id) {
         try {
             // Call the service to delete the register

@@ -17,7 +17,7 @@ import com.oniesoft.model.TestCase;
 import com.oniesoft.serviceimpl.TestCaseServiceImpl;
 
 @RestController
-@RequestMapping("/api/testcases")
+@RequestMapping("/testcases/v1")
 public class TestCaseController {
 
     @Autowired
