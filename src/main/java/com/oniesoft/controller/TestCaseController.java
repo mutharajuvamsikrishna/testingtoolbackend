@@ -40,6 +40,11 @@ public class TestCaseController {
         TestCase testCase = testCaseService.getTestCaseById(id);
         return ResponseEntity.ok(testCase);
     }
+    @GetMapping("/getForProject/{id}")
+    public ResponseEntity<List<TestCase>> getTestCaseForProject(@PathVariable Long id) {
+        List<TestCase> testCase = testCaseService.getAllTestCasesForProject(id);
+        return ResponseEntity.ok(testCase);
+    }
 
     @GetMapping("/getAll")
     public ResponseEntity<List<TestCase>> getAllTestCases() {
