@@ -1,5 +1,6 @@
 package com.oniesoft.controller;
 import com.oniesoft.dto.TestRunRequest;
+import com.oniesoft.model.TestCase;
 import com.oniesoft.model.TestRun;
 import com.oniesoft.model.TestRunAndTestCase;
 import com.oniesoft.repository.TestCaseRepository;
@@ -7,10 +8,9 @@ import com.oniesoft.repository.TestRunRepo;
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/testrun/v1")
@@ -27,14 +27,20 @@ public class TestRunController {
         }
     }
     @PostMapping("/addtestrun")
-    public ResponseEntity<TestRunRequest> addTestRun(@RequestBody TestRunRequest testRunRequest){
-       TestRunRequest testRunRequest1= testRunService.addTestRun(testRunRequest);
-       if(testRunRequest1!=null){
-           return ResponseEntity.ok(testRunRequest1);
+    public ResponseEntity<List<TestRunAndTestCase>> addTestRun(@RequestBody TestRunRequest testRunRequest){
+       List<TestRunAndTestCase> ele=  testRunService.addTestRun(testRunRequest);
+       if(ele!=null){
+           return ResponseEntity.ok(ele);
        }else{
            return ResponseEntity.status(400).body(null);
        }
     }
-
-
+@GetMapping("/gettestrunbyid")
+    public List<TestRun> getTestRunByProjectId(@RequestParam Long projectId){
+        return testRunService.getTestRunById(projectId);
+}
+    @GetMapping("/testcases/{testRunId}")
+    public List<TestCase> getTestCasesByTestRunId(@PathVariable int testRunId) {
+        return testRunService.getTestCasesByTestRunId(testRunId);
+    }
 }

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TestRunServiceImpl implements TestRunService {
@@ -30,11 +32,11 @@ public class TestRunServiceImpl implements TestRunService {
         return testRunRepo.save(testRun);
     }
     @Override
-    public TestRunRequest addTestRun(TestRunRequest testRunRequest) {
+    public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
         // Fetch the existing TestRun by ID
         TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId())
                 .orElseThrow(() -> new ResourceNotFoundException("TestRun not found with ID: " + testRunRequest.getTestRunId()));
-
+        List<TestRunAndTestCase> ele=new ArrayList<>();
         // Link each TestCase to the existing TestRun
         for (Long testCaseId : testRunRequest.getTestCaseId()) {
             TestCase testCase = testCaseRepository.findById(testCaseId)
@@ -44,14 +46,21 @@ public class TestRunServiceImpl implements TestRunService {
             TestRunAndTestCase link = new TestRunAndTestCase();
             link.setTestRun(testRun);
             link.setTestCase(testCase);
-
+             ele.add(link);
             // Save the link in the TestRunAndTestCase repository
             testRunAndTestCaseRepo.save(link);
 
-            System.out.println("Linked TestCase: " + testCase.getTestCaseName() + " with TestRun: " + testRun.getTestRunName());
         }
 
-        return testRunRequest;
+        return ele;
     }
+    @Override
+    public List<TestRun> getTestRunById(Long projectId){
 
+        return testRunRepo.findByProjectId(projectId);
+    }
+    @Override
+    public List<TestCase> getTestCasesByTestRunId(int testRunId) {
+        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
+    }
 }

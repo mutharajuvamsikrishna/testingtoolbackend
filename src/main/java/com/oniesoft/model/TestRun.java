@@ -15,7 +15,7 @@ public class TestRun {
     private String startedBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    private Long projectId;
 
     public TestRun() {
     }
@@ -76,6 +76,14 @@ public class TestRun {
         this.updatedAt = updatedAt;
     }
 
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
     @Override
     public String toString() {
         return "TestRun{" +
@@ -86,6 +94,7 @@ public class TestRun {
                 ", startedBy='" + startedBy + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", projectId=" + projectId +
                 '}';
     }
 }
