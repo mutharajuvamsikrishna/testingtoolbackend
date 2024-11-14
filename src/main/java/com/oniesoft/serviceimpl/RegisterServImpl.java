@@ -2,6 +2,7 @@ package com.oniesoft.serviceimpl;
 
 import com.oniesoft.dto.RegisterDto;
 import com.oniesoft.model.Register;
+import com.oniesoft.repository.CompanyRepo;
 import com.oniesoft.repository.RegisterRepo;
 import com.oniesoft.service.RegisterService;
 import jakarta.annotation.PostConstruct;
@@ -45,6 +46,8 @@ public class RegisterServImpl implements RegisterService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JavaMailSender javaMailSender;
+    @Autowired
+    private CompanyRepo companyRepo;
     private HashMap<String, RegisterDto> userMap = new HashMap<>();
 
     @Override
@@ -61,7 +64,6 @@ public class RegisterServImpl implements RegisterService {
         sendEmail(adminEmail,adminSubject,adminBody);
         return register1;
     }
-
 
     @Override
     public Register upDateRegisters(Register register) {

@@ -43,4 +43,8 @@ public class TestRunController {
     public List<TestCase> getTestCasesByTestRunId(@PathVariable int testRunId) {
         return testRunService.getTestCasesByTestRunId(testRunId);
     }
+    @GetMapping("/edittestrun/{testRunId}")
+    public List<TestCase> getAllUnMappedTestCases(@PathVariable int testRunId) {
+        return testRunService.getAllUnMappedTestCases(testRunId);
+    }
 }

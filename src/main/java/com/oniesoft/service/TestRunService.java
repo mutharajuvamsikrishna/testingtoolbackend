@@ -17,4 +17,6 @@ public interface TestRunService {
     List<TestRun> getTestRunById(Long projectId);
 
     List<TestCase> getTestCasesByTestRunId(int testRunId);
+
+    List<TestCase> getAllUnMappedTestCases(int testRunId);
 }

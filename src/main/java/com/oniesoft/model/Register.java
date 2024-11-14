@@ -17,9 +17,10 @@ public class Register {
     private String empDepartment;
     private boolean status;
     private String password;
-public Register(){
+    private int cmpId;
+    public Register(){
 
-}
+    }
 
     public int getId() {
         return id;
@@ -93,6 +94,14 @@ public Register(){
         this.password = password;
     }
 
+    public int getCmpId() {
+        return cmpId;
+    }
+
+    public void setCmpId(int cmpId) {
+        this.cmpId = cmpId;
+    }
+
     @Override
     public String toString() {
         return "Register{" +
@@ -105,6 +114,7 @@ public Register(){
                 ", empDepartment='" + empDepartment + '\'' +
                 ", status=" + status +
                 ", password='" + password + '\'' +
+                ", cmpId=" + cmpId +
                 '}';
     }
 }

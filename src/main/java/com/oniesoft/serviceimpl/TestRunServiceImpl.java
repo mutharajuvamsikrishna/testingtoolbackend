@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TestRunServiceImpl implements TestRunService {
@@ -63,4 +64,21 @@ public class TestRunServiceImpl implements TestRunService {
     public List<TestCase> getTestCasesByTestRunId(int testRunId) {
         return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
     }
+    @Override
+    public List<TestCase> getAllUnMappedTestCases(int testRunId) {
+        // Get all TestCase IDs that are associated with the given testRunId
+        List<Long> testCaseIds = testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRunId);
+
+        // Get all TestCase entities from the repository
+        List<TestCase> testCases = testCaseRepository.findAll();
+
+        // Filter the TestCase list to exclude those already associated with the testRunId
+        List<TestCase> unMappedTestCases = testCases.stream()
+                .filter(testCase -> !testCaseIds.contains(testCase.getId()))
+                .collect(Collectors.toList());
+
+        // Return the filtered list
+        return unMappedTestCases;
+    }
+
 }

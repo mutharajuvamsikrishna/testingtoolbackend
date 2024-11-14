@@ -53,7 +53,7 @@ public class SecurityConfig {
                 })
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/projects/**","/api/testcases/**", "/login/v1/**","/forgetaccount/v1/**","/swagger-ui/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
+                .requestMatchers("/login/v1/**","/forgetaccount/v1/**","/swagger-ui/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("**")
                 .authenticated().and()
