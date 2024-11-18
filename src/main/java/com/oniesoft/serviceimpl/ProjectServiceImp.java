@@ -28,10 +28,10 @@ public class ProjectServiceImp implements ProjectService {
 	}
 
 	@Override
-	public Project updateProject(long id, Project project) {
+	public Project updateProject( Project project) {
        
-		Project updateProject = projectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
+		Project updateProject = projectRepository.findById(project.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + project.getId()));
 	  updateProject.setProjectName(project.getProjectName());
 	  updateProject.setUpdatedAt(LocalDateTime.now());
 	  return projectRepository.save(updateProject);

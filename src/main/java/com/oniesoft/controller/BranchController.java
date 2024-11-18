@@ -29,10 +29,10 @@ public class BranchController {
     }
 
     // Update an existing branch
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateBranch(@PathVariable int id, @RequestBody Branch branch) {
+    @PutMapping("/update")
+    public ResponseEntity<?> updateBranch( @RequestBody Branch branch) {
         try {
-            branch.setId(id); // Ensure the branch ID is set for update
+
             Branch updatedBranch = branchService.updateBranch(branch);
             return new ResponseEntity<>(updatedBranch, HttpStatus.OK);
         } catch (Exception e) {

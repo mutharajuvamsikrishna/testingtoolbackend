@@ -70,8 +70,9 @@ public class RegisterServImpl implements RegisterService {
     public Register upDateRegisters(Register register) {
         Register register1 = registerRepo.findByEmpEmail(register.getEmpEmail());
         if (register1 != null) {
+            register1.setEmpName(register.getEmpName());
             register1.setEmpDepartment(register.getEmpDepartment());
-            register1.setEmpRole(register.getEmpRole());
+            register1.setEmpMob(register.getEmpMob());
             register1.setStatus(register.isStatus());
             registerRepo.save(register1);
             String subject="";

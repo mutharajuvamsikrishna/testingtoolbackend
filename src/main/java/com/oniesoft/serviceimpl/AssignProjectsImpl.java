@@ -77,6 +77,10 @@ public class AssignProjectsImpl implements AssignProjectsService {
         return projectUsersRepo.findProjectsByRegisterId(registerId);
     }
     @Override
+    public List<Project> getProjectsByBranchId(int branchId){
+        return projectRepository.findByBranchId(branchId);
+    }
+    @Override
     public List<Register> getAllUnMappedProject(long projectId,int branchId) {
         // Get all TestCase IDs that are associated with the given testRunId
         List<Integer> registerIds = projectUsersRepo.findRegisterIdsByProjectId(projectId);
