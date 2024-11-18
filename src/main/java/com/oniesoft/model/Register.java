@@ -1,15 +1,13 @@
 package com.oniesoft.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 @Entity
 public class Register {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String empId;
+
     private String empName;
     private String empEmail;
     private String empMob;
@@ -17,7 +15,8 @@ public class Register {
     private String empDepartment;
     private boolean status;
     private String password;
-    private int cmpId;
+  private int branchId;
+
     public Register(){
 
     }
@@ -30,13 +29,6 @@ public class Register {
         this.id = id;
     }
 
-    public String getEmpId() {
-        return empId;
-    }
-
-    public void setEmpId(String empId) {
-        this.empId = empId;
-    }
 
     public String getEmpName() {
         return empName;
@@ -94,19 +86,18 @@ public class Register {
         this.password = password;
     }
 
-    public int getCmpId() {
-        return cmpId;
+    public int getBranchId() {
+        return branchId;
     }
 
-    public void setCmpId(int cmpId) {
-        this.cmpId = cmpId;
+    public void setBranchId(int branchId) {
+        this.branchId = branchId;
     }
 
     @Override
     public String toString() {
         return "Register{" +
                 "id=" + id +
-                ", empId='" + empId + '\'' +
                 ", empName='" + empName + '\'' +
                 ", empEmail='" + empEmail + '\'' +
                 ", empMob='" + empMob + '\'' +
@@ -114,7 +105,7 @@ public class Register {
                 ", empDepartment='" + empDepartment + '\'' +
                 ", status=" + status +
                 ", password='" + password + '\'' +
-                ", cmpId=" + cmpId +
+                ", branchId=" + branchId +
                 '}';
     }
 }

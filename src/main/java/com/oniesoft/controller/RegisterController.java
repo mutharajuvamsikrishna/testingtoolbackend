@@ -16,14 +16,17 @@ public class RegisterController {
     @Autowired
     private RegisterService registerService;
 
-    @PostMapping("/addregister")
-    public ResponseEntity<Register> addRegister(@RequestBody Register register) {
-        Register register1 = registerService.saveRegisters(register);
-        if (register1 != null) {
+    @PostMapping("/addregister/{role}")
+    public ResponseEntity<?> addRegister(@PathVariable String role,@RequestBody Register register) {
+        Register register1 = null;
+        try {
+            register1 = registerService.saveRegisters(register,role);
             return ResponseEntity.ok(register1);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while saving the register: " + e.getMessage());
         }
+
     }
 
     @PostMapping("/updateregister")
@@ -48,9 +51,9 @@ public class RegisterController {
         return registerService.getAllPageRegister(page,size);
     }
     @GetMapping("/getreg")
-    public Register getAdminRegister(@RequestParam String empId) {
+    public Register getAdminRegister(@RequestParam String email) {
 
-        return registerService.getRegister(empId);
+        return registerService.getRegister(email);
     }
 
 

@@ -28,4 +28,8 @@ public class AssignProjectController {
     public List<Project> getTestCasesByTestRunId(@PathVariable int registerId) {
         return assignProjectsService.getProjectsId(registerId);
     }
+    @GetMapping("/editassignproject/{registerId}")
+    public List<Register> getAllUnMappedTestCases(@PathVariable int registerId) {
+        return assignProjectsService.getAllUnMappedProject(registerId);
+    }
 }

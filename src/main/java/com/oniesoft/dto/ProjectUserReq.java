@@ -3,26 +3,25 @@ package com.oniesoft.dto;
 import java.util.List;
 
 public class ProjectUserReq {
-private int registerId;
-private List<Long> projectIds;
+private long projectId;
+private List<Integer> registerIds;
 public ProjectUserReq(){
 
 }
 
-    public int getRegisterId() {
-        return registerId;
+    public long getProjectId() {
+        return projectId;
     }
 
-    public void setRegisterId(int registerId) {
-        this.registerId = registerId;
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
     }
 
-    public List<Long> getProjectIds() {
-        return projectIds;
+    public List<Integer> getRegisterIds() {
+        return registerIds;
     }
 
-    public void setProjectIds(List<Long> projectIds) {
-        this.projectIds = projectIds;
+    public void setRegisterIds(List<Integer> registerIds) {
+        this.registerIds = registerIds;
     }
-
 }

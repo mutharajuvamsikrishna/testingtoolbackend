@@ -24,7 +24,7 @@ public class Project {
 	private String projectName;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-	
+	private int Branch;
 	@OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch=FetchType.LAZY )
 	@JsonIgnore
 	private List<TestCase>  testCases;

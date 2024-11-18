@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AssignProjectsImpl implements AssignProjectsService {
@@ -24,13 +25,13 @@ public class AssignProjectsImpl implements AssignProjectsService {
     @Override
     public List<ProjectUsers> assignProjects(ProjectUserReq projectUserReq) {
         // Fetch the existing TestRun by ID
-        Register register = registerRepo.findById(projectUserReq.getRegisterId())
-                .orElseThrow(() -> new ResourceNotFoundException("Register not found with ID: " + projectUserReq.getRegisterId()));
+        Project project = projectRepository.findById(projectUserReq.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Register not found with ID: " + projectUserReq.getProjectId()));
         List<ProjectUsers> ele=new ArrayList<>();
         // Link each TestCase to the existing TestRun
-        for (Long projectId : projectUserReq.getProjectIds()) {
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new ResourceNotFoundException("project not found with ID: " + projectId));
+        for (int registerId : projectUserReq.getRegisterIds()) {
+            Register register = registerRepo.findById(registerId)
+                    .orElseThrow(() -> new ResourceNotFoundException("project not found with ID: " + registerId));
 
             // Create a new TestRunAndTestCase link
             ProjectUsers link = new ProjectUsers();
@@ -44,8 +45,28 @@ public class AssignProjectsImpl implements AssignProjectsService {
 
         return ele;
     }
+    @Override
+    public List<ProjectUsers> getAllProjectUsers(){
+        return projectUsersRepo.findAll();
+    }
 @Override
     public List<Project> getProjectsId(int registerId) {
         return projectUsersRepo.findProjectsByRegisterId(registerId);
+    }
+    @Override
+    public List<Register> getAllUnMappedProject(long projectId) {
+        // Get all TestCase IDs that are associated with the given testRunId
+        List<Integer> registerIds = projectUsersRepo.findRegisterIdsByProjectId(projectId);
+System.out.println(registerIds);
+        // Get all TestCase entities from the repository
+        List<Register> registers = registerRepo.findAll();
+System.out.println(registers);
+        // Filter the TestCase list to exclude those already associated with the testRunId
+        List<Register> unMappedTestCases = registers.stream()
+                .filter(register -> !registerIds.contains(register.getId()))
+                .collect(Collectors.toList());
+System.out.println(unMappedTestCases);
+        // Return the filtered list
+        return unMappedTestCases;
     }
 }

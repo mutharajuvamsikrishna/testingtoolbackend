@@ -21,8 +21,8 @@ public class ForgetAccountImpl implements ForgetAccount {
     @Autowired
     private RegisterService registerService;
     private HashMap<String, RegisterDto> userMap = new HashMap<>();
-    @Value("${adminemail}")
-    private String adminEmail;
+    @Value("${superAdminEmail}")
+    private String superAdminEmail;
     @Override
     public void saveRegisters(RegisterDto registerDto) {
         userMap.put(registerDto.getEmpId(), registerDto);
@@ -44,7 +44,7 @@ public class ForgetAccountImpl implements ForgetAccount {
     }
     @Override
     public boolean getForgetedOTP(RegisterDto registerDto) {
-        Register register=registerRepo.findByEmpIdAndEmpEmail(registerDto.getEmpId(),registerDto.getEmpEmail());
+        Register register=registerRepo.findByEmpMobAndEmpEmail(registerDto.getEmpMob(),registerDto.getEmpEmail());
         if(register!=null){
             String subject="ONiE Soft ";
             String otp=  generateOTP();
@@ -54,7 +54,7 @@ public class ForgetAccountImpl implements ForgetAccount {
             if(register.getEmpEmail()!="") {
                 registerService.sendEmail(register.getEmpEmail(), subject, body);
             }else {
-                registerService.sendEmail(adminEmail, subject, body);
+                registerService.sendEmail(superAdminEmail, subject, body);
             }
             return true;
         }else{
@@ -66,7 +66,7 @@ public class ForgetAccountImpl implements ForgetAccount {
     public  boolean verifyForgetOtp(RegisterDto registerDto){
         RegisterDto registerDto1 = getRegister(registerDto.getEmpId());
         if ((registerDto1!=null)&&(registerDto1.getOtp().equals(registerDto.getOtp()))) {
-            Register register=  registerRepo.findByEmpId(registerDto.getEmpId());
+            Register register=  registerRepo.findByEmpEmail(registerDto.getEmpEmail());
             register.setPassword(passwordEncoder.encode(registerDto.getPassword()));
             registerRepo.save(register);
             removeRegister(registerDto.getEmpId());

@@ -24,24 +24,21 @@ import java.util.List;
 public class RegisterServImpl implements RegisterService {
     @Autowired
     private RegisterRepo registerRepo;
-    @Value("${adminId}")
-    private String adminId;
-    @Value("${adminName}")
-    private String adminName;
-    @Value("${adminEmail}")
-    private String adminEmail;
-    @Value("${adminMob}")
-    private String adminMob;
-    @Value("${adminDept}")
-    private String adminDept;
-    @Value("${adminRole}")
-    private String adminRole;
+    @Value("${superAdminName}")
+    private String superAdminName;
+    @Value("${superAdminEmail}")
+    private String superAdminEmail;
+    @Value("${superAdminMob}")
+    private String  superAdminMob;
+    @Value("${superAdminDept}")
+    private String superAdminDept;
+    @Value("${superAdminRole}")
+    private String superAdminRole;
     @Value("${status}")
     private boolean status;
-    @Value("${reference}")
-    private String reference;
-    @Value("${adminPassword}")
-    private String adminPassword;
+
+    @Value("${superAdminPassword}")
+    private String superAdminPassword;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -51,23 +48,32 @@ public class RegisterServImpl implements RegisterService {
     private HashMap<String, RegisterDto> userMap = new HashMap<>();
 
     @Override
-    public Register saveRegisters(Register register) {
-
-        register.setStatus(true);
-        register.setPassword(passwordEncoder.encode(register.getPassword()));
-        Register register1 = registerRepo.save(register);
-        String subject="";
-        String body="";
-        String adminSubject="";
-        String adminBody="";
-        sendEmail(register1.getEmpEmail(),subject,body);
-        sendEmail(adminEmail,adminSubject,adminBody);
-        return register1;
+    public Register saveRegisters(Register register,String role) throws Exception {
+        Register findRegister=registerRepo.findByEmpEmail(register.getEmpEmail());
+        if (findRegister==null) {
+            if (role.equals("SuperAdmin")) {
+                register.setEmpRole("Admin");
+            } else {
+                register.setEmpRole("User");
+            }
+            register.setStatus(true);
+            register.setPassword(passwordEncoder.encode(register.getPassword()));
+            Register register1 = registerRepo.save(register);
+            String subject = "";
+            String body = "";
+            String adminSubject = "";
+            String adminBody = "";
+            sendEmail(register1.getEmpEmail(), subject, body);
+            sendEmail(superAdminEmail, adminSubject, adminBody);
+            return register1;
+        }else{
+             throw new Exception("User Already Exists");
+        }
     }
 
     @Override
     public Register upDateRegisters(Register register) {
-        Register register1 = registerRepo.findByEmpId(register.getEmpId());
+        Register register1 = registerRepo.findByEmpEmail(register.getEmpEmail());
         if (register1 != null) {
             register1.setEmpDepartment(register.getEmpDepartment());
             register1.setEmpRole(register.getEmpRole());
@@ -78,7 +84,7 @@ public class RegisterServImpl implements RegisterService {
             String adminSubject="";
             String adminBody="";
             sendEmail(register1.getEmpEmail(),subject,body);
-            sendEmail(adminEmail,adminSubject,adminBody);
+            sendEmail(superAdminEmail,adminSubject,adminBody);
         }
         return register1;
     }
@@ -91,23 +97,22 @@ public class RegisterServImpl implements RegisterService {
     @PostConstruct
     public void addAdmin() {
         Register register = new Register();
-        register.setEmpId(adminId);
-        register.setEmpName(adminName);
-        register.setEmpEmail(adminEmail);
-        register.setEmpMob(adminMob);
-        register.setEmpDepartment(adminDept);
-        register.setEmpRole(adminRole);
+        register.setEmpName(superAdminName);
+        register.setEmpEmail(superAdminEmail);
+        register.setEmpMob(superAdminMob);
+        register.setEmpDepartment(superAdminDept);
+        register.setEmpRole(superAdminRole);
         register.setStatus(status);
-        register.setPassword(passwordEncoder.encode(adminPassword));
-        Register register1 = registerRepo.findByEmpId(adminId);
+        register.setPassword(passwordEncoder.encode(superAdminPassword));
+        Register register1 = registerRepo.findByEmpEmail(superAdminEmail);
         if (register1 == null) {
             registerRepo.save(register);
         }
     }
 
     @Override
-    public Register getRegister(String empId) {
-        return registerRepo.findByEmpId(empId);
+    public Register getRegister(String email) {
+        return registerRepo.findByEmpEmail(email);
     }
     @Override
     public Page<Register> getAllPageRegister(int page, int size) {

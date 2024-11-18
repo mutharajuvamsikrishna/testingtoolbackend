@@ -12,4 +12,6 @@ public interface CompanyService {
     Company getCompanyById(int id) throws Exception;
 
     List<Company> getAllCompanies();
+
+    String deleteCompany(int id);
 }

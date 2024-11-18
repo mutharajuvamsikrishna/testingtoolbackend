@@ -8,7 +8,7 @@ import java.util.List;
 public interface RegisterService {
 
 
-    Register saveRegisters(Register register);
+    Register saveRegisters(Register register,String role) throws Exception;
 
     Register upDateRegisters(Register register);
 

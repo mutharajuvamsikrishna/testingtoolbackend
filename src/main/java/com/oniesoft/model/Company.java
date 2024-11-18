@@ -1,6 +1,9 @@
 package com.oniesoft.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Company {
@@ -9,7 +12,7 @@ public class Company {
     private int id;
     private String cmpName;
     private String cmpId;
-    private String cmpBranch;
+
 public Company(){
 
 }
@@ -38,21 +41,12 @@ public Company(){
         this.cmpId = cmpId;
     }
 
-    public String getCmpBranch() {
-        return cmpBranch;
-    }
-
-    public void setCmpBranch(String cmpBranch) {
-        this.cmpBranch = cmpBranch;
-    }
-
     @Override
     public String toString() {
         return "Company{" +
                 "id=" + id +
                 ", cmpName='" + cmpName + '\'' +
                 ", cmpId='" + cmpId + '\'' +
-                ", cmpBranch='" + cmpBranch + '\'' +
                 '}';
     }
 }

@@ -44,4 +44,10 @@ public Company upDateCompant(Company company) throws Exception {
     public List<Company> getAllCompanies(){
         return companyRepo.findAll();
 }
+@Override
+    public String deleteCompany(int id){
+        companyRepo.deleteById(id);
+        return "Delete Successfully";
+    }
 }
+

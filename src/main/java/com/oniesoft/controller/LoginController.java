@@ -33,15 +33,15 @@ public class LoginController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticateAndGetToken(@RequestBody Register authRequest) {
-        String empId = authRequest.getEmpId();
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmpId(), authRequest.getPassword()));
+        String email = authRequest.getEmpEmail();
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmpEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            Register userRole = registerRepo.findByEmpId(empId);
+            Register userRole = registerRepo.findByEmpEmail(email);
                  if(!userRole.isStatus()){
                      System.out.println("Ok");
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
                  }
-            final String jwt = jwtService.generateToken(authRequest.getEmpId());
+            final String jwt = jwtService.generateToken(authRequest.getEmpEmail());
 
             // Create an instance of AuthenticationResponse and return it in the ResponseEntity
             AuthenticationResponse response = new AuthenticationResponse(jwt, userRole);

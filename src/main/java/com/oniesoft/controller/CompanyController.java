@@ -50,4 +50,13 @@ public class CompanyController {
     public List<Company> getAllCompany(){
         return companyService.getAllCompanies();
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable int id){
+        String msg=companyService.deleteCompany(id);
+        if(msg.isEmpty()){
+          return   ResponseEntity.status(404).body("Something Went Wrong");
+        }else{
+           return ResponseEntity.ok(msg);
+        }
+    }
 }
