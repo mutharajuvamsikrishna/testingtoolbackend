@@ -16,6 +16,7 @@ public interface ProjectUsersRepo extends JpaRepository<ProjectUsers,Integer> {
     @Query("SELECT pur.register.id FROM ProjectUsers pur WHERE pur.project.id = :projectId")
     List<Integer> findRegisterIdsByProjectId(@Param("projectId") Long projectId);
 
-
+    @Query("SELECT pur.project.id FROM ProjectUsers pur WHERE pur.register.id = :registerId")
+    List<Long> findProjectIdsByRegisterId(@Param("registerId") int registerId);
 
 }

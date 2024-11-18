@@ -3,8 +3,7 @@ import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.model.TestCase;
 import com.oniesoft.model.TestRun;
 import com.oniesoft.model.TestRunAndTestCase;
-import com.oniesoft.repository.TestCaseRepository;
-import com.oniesoft.repository.TestRunRepo;
+
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +42,8 @@ public class TestRunController {
     public List<TestCase> getTestCasesByTestRunId(@PathVariable int testRunId) {
         return testRunService.getTestCasesByTestRunId(testRunId);
     }
-    @GetMapping("/edittestrun/{testRunId}")
-    public List<TestCase> getAllUnMappedTestCases(@PathVariable int testRunId) {
-        return testRunService.getAllUnMappedTestCases(testRunId);
+    @GetMapping("/edittestrun")
+    public List<TestCase> getAllUnMappedTestCases(@RequestParam int testRunId,@RequestParam long projectId) {
+        return testRunService.getAllUnMappedTestCases(testRunId,projectId);
     }
 }

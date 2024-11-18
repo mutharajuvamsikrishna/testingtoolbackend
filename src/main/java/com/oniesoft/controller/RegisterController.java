@@ -16,11 +16,11 @@ public class RegisterController {
     @Autowired
     private RegisterService registerService;
 
-    @PostMapping("/addregister/{role}")
-    public ResponseEntity<?> addRegister(@PathVariable String role,@RequestBody Register register) {
+    @PostMapping("/addregister")
+    public ResponseEntity<?> addRegister(@RequestBody Register register) {
         Register register1 = null;
         try {
-            register1 = registerService.saveRegisters(register,role);
+            register1 = registerService.saveRegisters(register);
             return ResponseEntity.ok(register1);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

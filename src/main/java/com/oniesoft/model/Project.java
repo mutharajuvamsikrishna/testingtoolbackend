@@ -24,10 +24,14 @@ public class Project {
 	private String projectName;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-	private int Branch;
+	private int branchId;
 	@OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch=FetchType.LAZY )
 	@JsonIgnore
 	private List<TestCase>  testCases;
+
+public Project(){
+
+}
 
 	public long getId() {
 		return id;
@@ -61,6 +65,14 @@ public class Project {
 		this.updatedAt = updatedAt;
 	}
 
+	public int getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(int branchId) {
+		this.branchId = branchId;
+	}
+
 	public List<TestCase> getTestCases() {
 		return testCases;
 	}
@@ -76,6 +88,7 @@ public class Project {
 				", projectName='" + projectName + '\'' +
 				", createdAt=" + createdAt +
 				", updatedAt=" + updatedAt +
+				", branchId=" + branchId +
 				", testCases=" + testCases +
 				'}';
 	}

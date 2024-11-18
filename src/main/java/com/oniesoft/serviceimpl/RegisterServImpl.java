@@ -48,14 +48,9 @@ public class RegisterServImpl implements RegisterService {
     private HashMap<String, RegisterDto> userMap = new HashMap<>();
 
     @Override
-    public Register saveRegisters(Register register,String role) throws Exception {
+    public Register saveRegisters(Register register) throws Exception {
         Register findRegister=registerRepo.findByEmpEmail(register.getEmpEmail());
         if (findRegister==null) {
-            if (role.equals("SuperAdmin")) {
-                register.setEmpRole("Admin");
-            } else {
-                register.setEmpRole("User");
-            }
             register.setStatus(true);
             register.setPassword(passwordEncoder.encode(register.getPassword()));
             Register register1 = registerRepo.save(register);

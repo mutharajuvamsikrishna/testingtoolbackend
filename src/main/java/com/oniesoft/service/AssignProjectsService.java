@@ -11,10 +11,15 @@ public interface AssignProjectsService {
 
     List<ProjectUsers> assignProjects(ProjectUserReq projectUserReq);
 
+    List<ProjectUsers> assignRegisters(ProjectUserReq projectUserReq);
+
     List<ProjectUsers> getAllProjectUsers();
 
     List<Project> getProjectsId(int registerId);
 
 
-    List<Register> getAllUnMappedProject(long projectId);
+    List<Register> getAllUnMappedProject(long projectId,int branchId);
+
+    //    new one
+    List<Project> getAllUnMappedRegisters(int registerId,int branchId);
 }

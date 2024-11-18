@@ -65,12 +65,12 @@ public class TestRunServiceImpl implements TestRunService {
         return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
     }
     @Override
-    public List<TestCase> getAllUnMappedTestCases(int testRunId) {
+    public List<TestCase> getAllUnMappedTestCases(int testRunId,long projectId) {
         // Get all TestCase IDs that are associated with the given testRunId
         List<Long> testCaseIds = testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRunId);
 
         // Get all TestCase entities from the repository
-        List<TestCase> testCases = testCaseRepository.findAll();
+        List<TestCase> testCases = testCaseRepository.findByProject_Id(projectId);
 
         // Filter the TestCase list to exclude those already associated with the testRunId
         List<TestCase> unMappedTestCases = testCases.stream()
