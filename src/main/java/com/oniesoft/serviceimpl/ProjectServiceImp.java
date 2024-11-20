@@ -43,7 +43,10 @@ public class ProjectServiceImp implements ProjectService {
 
 		return projectRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Poject not found with id: "+id));
 	}
-
+	@Override
+	public List<Project> getProjectsByBranchId(int branchId){
+		return projectRepository.findByBranchId(branchId);
+	}
 	@Override
 	public List<Project> getAllProjects() {
 

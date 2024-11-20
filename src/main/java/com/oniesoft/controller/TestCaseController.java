@@ -29,9 +29,9 @@ public class TestCaseController {
         return ResponseEntity.ok(savedTestCase);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<TestCase> updateTestCase(@PathVariable Long id, @RequestBody TestCase testCase) {
-        TestCase updatedTestCase = testCaseService.updateTestCase(id, testCase);
+    @PutMapping("/update")
+    public ResponseEntity<TestCase> updateTestCase( @RequestBody TestCase testCase) {
+        TestCase updatedTestCase = testCaseService.updateTestCase(testCase);
         return ResponseEntity.ok(updatedTestCase);
     }
 

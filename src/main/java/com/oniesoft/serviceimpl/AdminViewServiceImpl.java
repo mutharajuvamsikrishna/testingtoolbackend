@@ -1,8 +1,6 @@
 package com.oniesoft.serviceimpl;
 
 import com.oniesoft.model.Branch;
-import com.oniesoft.model.Company;
-import com.oniesoft.model.Project;
 import com.oniesoft.model.Register;
 import com.oniesoft.repository.BranchRepo;
 import com.oniesoft.repository.CompanyRepo;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AdminViewServiceImpl implements AdminViewService {
@@ -25,9 +22,11 @@ public class AdminViewServiceImpl implements AdminViewService {
     private RegisterRepo registerRepo;
     @Autowired
     private ProjectRepository projectRepository;
+    @Override
 public List<Branch> findBranchByCmpId(int id){
   return branchRepo.findByCmpId(id);
 }
+@Override
     public List<Register> findRegisterByBranchId(int id){
         return registerRepo.findByBranchId(id);
     }

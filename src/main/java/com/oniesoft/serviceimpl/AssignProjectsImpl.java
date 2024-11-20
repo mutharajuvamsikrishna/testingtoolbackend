@@ -1,5 +1,6 @@
 package com.oniesoft.serviceimpl;
 
+import com.oniesoft.dto.ProjectDTO;
 import com.oniesoft.dto.ProjectUserReq;
 import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.*;
@@ -22,6 +23,7 @@ public class AssignProjectsImpl implements AssignProjectsService {
     private ProjectUsersRepo projectUsersRepo;
     @Autowired
     private ProjectRepository projectRepository;
+
     @Override
     public List<ProjectUsers> assignProjects(ProjectUserReq projectUserReq) {
         // Fetch the existing TestRun by ID
@@ -76,16 +78,14 @@ public class AssignProjectsImpl implements AssignProjectsService {
     public List<Project> getProjectsId(int registerId) {
         return projectUsersRepo.findProjectsByRegisterId(registerId);
     }
-    @Override
-    public List<Project> getProjectsByBranchId(int branchId){
-        return projectRepository.findByBranchId(branchId);
-    }
+
     @Override
     public List<Register> getAllUnMappedProject(long projectId,int branchId) {
         // Get all TestCase IDs that are associated with the given testRunId
         List<Integer> registerIds = projectUsersRepo.findRegisterIdsByProjectId(projectId);
 
         // Get all TestCase entities from the repository
+        System.out.println(branchId);
         List<Register> registers = registerRepo.findByBranchId(branchId);
 
         // Filter the TestCase list to exclude those already associated with the testRunId
@@ -98,19 +98,23 @@ public class AssignProjectsImpl implements AssignProjectsService {
     }
 //    new one
 @Override
-public List<Project> getAllUnMappedRegisters(int registerId,int branchId) {
-    // Get all TestCase IDs that are associated with the given testRunId
+public List<ProjectDTO> getAllUnMappedRegisters(int registerId, int branchId) {
     List<Long> projectIds = projectUsersRepo.findProjectIdsByRegisterId(registerId);
-
-    // Get all TestCase entities from the repository
     List<Project> projects = projectRepository.findByBranchId(branchId);
 
-    // Filter the TestCase list to exclude those already associated with the testRunId
-    List<Project> unMappedProjects = projects.stream()
+    // Filter and map to DTO
+    List<ProjectDTO> unMappedProjects = projects.stream()
             .filter(project -> !projectIds.contains(project.getId()))
+            .map(project -> new ProjectDTO(
+                    project.getId(),
+                    project.getProjectName(),
+                    project.getCreatedAt(),
+                    project.getUpdatedAt(),
+                    project.getBranchId()))
             .collect(Collectors.toList());
-    System.out.println(unMappedProjects);
-    // Return the filtered list
+
     return unMappedProjects;
 }
+
+
 }

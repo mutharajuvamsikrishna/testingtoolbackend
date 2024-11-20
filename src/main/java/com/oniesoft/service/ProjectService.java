@@ -9,6 +9,9 @@ public interface ProjectService {
 	public Project  createProject(Project project);
 	public Project  updateProject(Project project);
 	public Project getProject(long id);
+
+	List<Project> getProjectsByBranchId(int branchId);
+
 	public List<Project> getAllProjects();
 	public void deleteProject(long id);
 }

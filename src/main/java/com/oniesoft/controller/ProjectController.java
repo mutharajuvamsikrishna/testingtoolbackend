@@ -50,7 +50,10 @@ public class ProjectController {
 		Project getProject=projectService.getProject(id);
 		return  ResponseEntity.ok(getProject);
 	}
-	
+	@GetMapping("/getprojectsbybranchid/{branchId}")
+	public List<Project> getProjectsByBranchId(@PathVariable int branchId){
+		return projectService.getProjectsByBranchId(branchId);
+	}
 	@GetMapping("/getAllProjects")
 	public ResponseEntity<List<Project>> getAllProjects(){
 		

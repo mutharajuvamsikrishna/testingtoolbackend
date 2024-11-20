@@ -1,5 +1,6 @@
 package com.oniesoft.service;
 
+import com.oniesoft.dto.ProjectDTO;
 import com.oniesoft.dto.ProjectUserReq;
 import com.oniesoft.model.Project;
 import com.oniesoft.model.ProjectUsers;
@@ -18,10 +19,11 @@ public interface AssignProjectsService {
     List<Project> getProjectsId(int registerId);
 
 
-    List<Project> getProjectsByBranchId(int branchId);
 
     List<Register> getAllUnMappedProject(long projectId, int branchId);
 
     //    new one
-    List<Project> getAllUnMappedRegisters(int registerId,int branchId);
+    List<ProjectDTO> getAllUnMappedRegisters(int registerId, int branchId);
+
+
 }

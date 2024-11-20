@@ -35,8 +35,8 @@ testCase.setProject(project);
     }
 
     @Override
-    public TestCase updateTestCase(Long id, TestCase testCase) {
-        TestCase existingTestCase = testCaseRepository.findById(id)
+    public TestCase updateTestCase(TestCase testCase) {
+        TestCase existingTestCase = testCaseRepository.findById(testCase.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TestCase not found"));
         existingTestCase.setTestCaseName(testCase.getTestCaseName());
         existingTestCase.setStatus(testCase.getStatus());

@@ -1,5 +1,6 @@
 package com.oniesoft.controller;
 
+import com.oniesoft.dto.ProjectDTO;
 import com.oniesoft.dto.ProjectUserReq;
 
 import com.oniesoft.model.*;
@@ -37,16 +38,14 @@ public class AssignProjectController {
     public List<Project> getProjectsByRegisterId(@PathVariable int registerId) {
         return assignProjectsService.getProjectsId(registerId);
     }
-    @GetMapping("/getprojectsbybranchid/{branchId}")
-    public List<Project> getProjectsByBranchId(@PathVariable int branchId){
-        return assignProjectsService.getProjectsByBranchId(branchId);
-    }
+
     @GetMapping("/getunmapregister")
     public List<Register> getUnMapRegisters(@RequestParam long projectId,@RequestParam int branchId){
         return assignProjectsService.getAllUnMappedProject(projectId,branchId);
     }
     @GetMapping("/getunmapproject")
-    public List<Project> getUnMapProjects(@RequestParam int registerId,@RequestParam int branchId){
+    public List<ProjectDTO> getUnMapProjects(@RequestParam int registerId, @RequestParam int branchId){
         return assignProjectsService.getAllUnMappedRegisters(registerId,branchId);
     }
+
 }
