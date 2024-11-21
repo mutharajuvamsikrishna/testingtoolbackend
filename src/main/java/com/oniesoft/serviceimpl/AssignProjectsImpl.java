@@ -78,6 +78,10 @@ public class AssignProjectsImpl implements AssignProjectsService {
     public List<Project> getProjectsId(int registerId) {
         return projectUsersRepo.findProjectsByRegisterId(registerId);
     }
+    @Override
+    public List<Register> getRegistersByProjectId(long projectId) {
+        return projectUsersRepo.findRegistersByProjectId(projectId);
+    }
 
     @Override
     public List<Register> getAllUnMappedProject(long projectId,int branchId) {

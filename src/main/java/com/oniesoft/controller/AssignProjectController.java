@@ -48,7 +48,10 @@ public class AssignProjectController {
     public List<Project> getProjectsByRegisterId(@PathVariable int registerId) {
         return assignProjectsService.getProjectsId(registerId);
     }
-
+    @GetMapping("/getassignregisters/{projectId}")
+    public List<Register> getRegistersByProjectId(@PathVariable Long projectId) {
+        return assignProjectsService.getRegistersByProjectId(projectId);
+    }
     @GetMapping("/getunmapregister")
     public List<Register> getUnMapRegisters(@RequestParam long projectId,@RequestParam int branchId){
         return assignProjectsService.getAllUnMappedProject(projectId,branchId);

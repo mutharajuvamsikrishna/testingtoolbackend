@@ -19,6 +19,7 @@ public interface AssignProjectsService {
     List<Project> getProjectsId(int registerId);
 
 
+    List<Register> getRegistersByProjectId(long projectId);
 
     List<Register> getAllUnMappedProject(long projectId, int branchId);
 

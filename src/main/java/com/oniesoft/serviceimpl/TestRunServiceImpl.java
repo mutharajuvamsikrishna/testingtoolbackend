@@ -84,6 +84,7 @@ private ProjectRepository projectRepository;
     public List<TestRunAndCase> getTestCasesByTestRunId(int testRunId) {
         return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
     }
+
     @Override
     public List<TestCase> getAllUnMappedTestCases(int testRunId,long projectId) {
         // Get all TestCase IDs that are associated with the given testRunId
@@ -101,17 +102,6 @@ private ProjectRepository projectRepository;
         return unMappedTestCases;
     }
 
-    public List<TestRunAndCase> getTestCasesByTestRunIdForTool(int testRunId) {
-        List<TestRunAndCase> testRunAndCases = new ArrayList<>();
-        List<TestRunAndCase> testRunAndCases1 = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
-        for (TestRunAndCase testRunAndCase : testRunAndCases1) {
-            TestRunAndCase testRunAndCase1 = new TestRunAndCase();
-            testRunAndCase1.setId(testRunAndCase.getId());
-            testRunAndCase1.setAutomationId(testRunAndCase.getAutomationId());
-            testRunAndCases.add(testRunAndCase1);
-        }
-        return testRunAndCases;
-    }
 
 
     @Override
@@ -140,7 +130,7 @@ private ProjectRepository projectRepository;
 
         // Fetch project details
         Optional<Project> project = projectRepository.findById(testRun.getProjectId());
-        if (project.isPresent()) {
+        if (project.get().getProjectDir()!=null) {
             String mavenProjectPath = project.get().getProjectDir();
 
             // Step 4: Trigger Maven Tests with testRunId and testCaseIds

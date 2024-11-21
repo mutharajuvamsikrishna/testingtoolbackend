@@ -2,6 +2,7 @@ package com.oniesoft.repository;
 
 import com.oniesoft.model.Project;
 import com.oniesoft.model.ProjectUsers;
+import com.oniesoft.model.Register;
 import com.oniesoft.model.TestCase;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,8 @@ import java.util.List;
 public interface ProjectUsersRepo extends JpaRepository<ProjectUsers,Integer> {
         @Query("SELECT pur.project FROM ProjectUsers pur WHERE pur.register.id = :registerId")
         List<Project> findProjectsByRegisterId(@Param("registerId") int registerId);
+    @Query("SELECT pur.register FROM ProjectUsers pur WHERE pur.project.id = :projectId")
+    List<Register> findRegistersByProjectId(@Param("projectId") long projectId);
     @Query("SELECT pur.register.id FROM ProjectUsers pur WHERE pur.project.id = :projectId")
     List<Integer> findRegisterIdsByProjectId(@Param("projectId") Long projectId);
 
