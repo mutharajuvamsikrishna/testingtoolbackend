@@ -18,5 +18,11 @@ public interface TestRunAndTestCaseRepo extends JpaRepository<TestRunAndTestCase
     @Query("SELECT trtc.testCase.automationId FROM TestRunAndTestCase trtc WHERE trtc.testRun.id = :testRunId")
     List<String> findTestCaseIdsByTestRunId(@Param("testRunId") int testRunId);
 
+    @Query("SELECT trtc.testCase FROM TestRunAndTestCase trtc WHERE trtc.testRun.id = :testRunId AND trtc.testCase.automationId = :automationId")
+    TestRunAndCase findTestCaseByTestRunIdAndAutomationId(
+            @Param("testRunId") int testRunId,
+            @Param("automationId") String automationId
+    );
+
 
 }

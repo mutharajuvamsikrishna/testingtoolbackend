@@ -62,7 +62,7 @@ public class TestRunController {
         }
     }
     @PutMapping("/addtestresults")
-    public ResponseEntity<String> addTestResults(@RequestBody List<TestResultDto> testResultDtos) {
+    public ResponseEntity<String> addTestResults(@RequestBody TestResultDto testResultDtos) {
         try {
             // Call the service method to process the test results
             String response = testRunService.testResultsAdd(testResultDtos);

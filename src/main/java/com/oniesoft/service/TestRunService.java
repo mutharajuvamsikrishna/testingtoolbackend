@@ -26,6 +26,8 @@ public interface TestRunService {
 
     String integrateTestCasesWithTestingTool(int testRunId) throws Exception;
 
+    String testResultsAdd(TestResultDto testResultDto);
 
-    String testResultsAdd(List<TestResultDto> testRunAndCaseList);
+
+
 }

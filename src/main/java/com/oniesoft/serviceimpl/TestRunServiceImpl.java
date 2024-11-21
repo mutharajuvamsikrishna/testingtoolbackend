@@ -1,5 +1,6 @@
 package com.oniesoft.serviceimpl;
 
+
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.exception.ResourceNotFoundException;
@@ -7,7 +8,7 @@ import com.oniesoft.model.*;
 import com.oniesoft.repository.*;
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -189,47 +190,36 @@ private ProjectRepository projectRepository;
     }
 
     @Override
-    public String testResultsAdd(List<TestResultDto> testResultDtos) {
-        List<TestResults> testResultsList = new ArrayList<>();
+    public String testResultsAdd(TestResultDto testResultDto) {
+        // Fetch TestRunAndCase from repository based on the testRunId and automationId
+        TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(testResultDto.getTestRunId(),testResultDto.getAutomationId());
 
-        for (TestResultDto testResultDto : testResultDtos) {
-            // Fetch TestRunAndCase from repository based on the testRunId
-            List<TestRunAndCase> existingTestRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
+        if (existingTestRunAndCase != null) {
+            // Update the status of TestRunAndCase from TestResultDto
+            existingTestRunAndCase.setStatus(testResultDto.getStatus());
+            TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase); // Persist the updated status
 
-            if (existingTestRunAndCases != null) {
-                // Assuming we are updating all test cases related to the TestRunId
-                for (TestRunAndCase existingTestRunAndCase : existingTestRunAndCases) {
-                    // Update the status of TestRunAndCase from TestResultDto (status is part of DTO)
-                    existingTestRunAndCase.setStatus(testResultDto.getStatus());
-         TestRunAndCase testRunAndCase= testRunAndCaseRepo.save(existingTestRunAndCase); // Persist the updated status
+            // Create TestResults object and set values from TestResultDto
+            TestResults testResults = new TestResults();
+            testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
+            testResults.setAuthor(updatedTestRunAndCase.getAuthor());
+            testResults.setAutomationId(updatedTestRunAndCase.getAutomationId());
+            testResults.setFeature(updatedTestRunAndCase.getFeature());
+            testResults.setCreatedAt(LocalDateTime.now());
+            testResults.setUpdatedAt(LocalDateTime.now());
+            testResults.setExcuteTime(testResultDto.getExcuteTime());
+            testResults.setStatus(testResultDto.getStatus());
+             testResults.setTestRunId(testResultDto.getTestRunId());
+            // Save the TestResults entry
+            testResultsRepo.save(testResults);
 
-                    // Create TestResults object and set values from TestResultDto
-                    TestResults testResults = new TestResults();
-                    testResults.setTestCaseName(testRunAndCase.getTestCaseName());
-                    testResults.setAuthor(testRunAndCase.getAuthor());
-                    testResults.setAutomationId(testRunAndCase.getAutomationId());
-                    testResults.setFeature(testRunAndCase.getFeature());
-                    testResults.setCreatedAt(LocalDateTime.now());  // Can also use `testResultDto.getCreatedAt()`
-                    testResults.setUpdatedAt(LocalDateTime.now());  // Set the updated timestamp
-                    testResults.setExcuteTime(testResultDto.getExcuteTime());    // Can be customized as needed
-                    testResults.setStatus(testResultDto.getStatus());  // Set the status from DTO
-
-                    // Add to the list for bulk saving later
-                    testResultsList.add(testResults);
-                }
-            } else {
-                // Handle the case where no TestRunAndCase is found for this TestRunId
-                System.err.println("No TestRunAndCase found for TestRunId: " + testResultDto.getTestRunId());
-            }
+            return "Test result updated successfully for TestRunId: " + testResultDto.getTestRunId();
+        } else {
+            // Handle the case where no TestRunAndCase is found for the given TestRunId and AutomationId
+            return "No TestRunAndCase found for TestRunId: " + testResultDto.getTestRunId() + " and AutomationId: " + testResultDto.getAutomationId();
         }
-
-        // Bulk save all TestResults at once to minimize database calls
-        if (!testResultsList.isEmpty()) {
-            testResultsRepo.saveAll(testResultsList);
-        }
-
-        return "Test results updated successfully. " + testResultsList.size() + " entries processed.";
     }
+
 
 
 

@@ -12,6 +12,7 @@ public class TestResults {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private int testRunId;
     private String testCaseName;
     private String author;
     private String automationId;
@@ -31,6 +32,14 @@ public class TestResults {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getTestRunId() {
+        return testRunId;
+    }
+
+    public void setTestRunId(int testRunId) {
+        this.testRunId = testRunId;
     }
 
     public String getTestCaseName() {
@@ -101,6 +110,7 @@ public class TestResults {
     public String toString() {
         return "TestResults{" +
                 "id=" + id +
+                ", testRunId=" + testRunId +
                 ", testCaseName='" + testCaseName + '\'' +
                 ", author='" + author + '\'' +
                 ", automationId='" + automationId + '\'' +
