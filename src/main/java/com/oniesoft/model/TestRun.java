@@ -13,6 +13,7 @@ public class TestRun {
     private String status;
     private String createdBy;
     private String startedBy;
+    private LocalDateTime startedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long projectId;
@@ -60,6 +61,14 @@ public class TestRun {
         this.startedBy = startedBy;
     }
 
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -92,6 +101,7 @@ public class TestRun {
                 ", status='" + status + '\'' +
                 ", createdBy='" + createdBy + '\'' +
                 ", startedBy='" + startedBy + '\'' +
+                ", startedAt=" + startedAt +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", projectId=" + projectId +

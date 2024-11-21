@@ -3,6 +3,7 @@ package com.oniesoft.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +25,15 @@ public class TestCaseController {
     private TestCaseServiceImpl testCaseService;
 
     @PostMapping("/save/{projectId}")
-    public ResponseEntity<TestCase> saveTestCase(@RequestBody TestCase testCase, @PathVariable long projectId) {
-        TestCase savedTestCase = testCaseService.createTestCase(testCase, projectId);
-        return ResponseEntity.ok(savedTestCase);
+    public ResponseEntity<?> saveTestCase(@RequestBody TestCase testCase, @PathVariable long projectId) {
+        TestCase savedTestCase = null;
+        try {
+            savedTestCase = testCaseService.createTestCase(testCase, projectId);
+            return ResponseEntity.ok(savedTestCase);
+        } catch (Exception e) {
+          return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
     @PutMapping("/update")

@@ -13,7 +13,7 @@ public class TestCase {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String testCaseName;
-	private String status;
+
 	private String author;
 	private String automationId;
 	private String feature;
@@ -40,14 +40,6 @@ public class TestCase {
 
 	public void setTestCaseName(String testCaseName) {
 		this.testCaseName = testCaseName;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getAuthor() {
@@ -103,7 +95,6 @@ public class TestCase {
 		return "TestCase{" +
 				"id=" + id +
 				", testCaseName='" + testCaseName + '\'' +
-				", status='" + status + '\'' +
 				", author='" + author + '\'' +
 				", automationId='" + automationId + '\'' +
 				", feature='" + feature + '\'' +

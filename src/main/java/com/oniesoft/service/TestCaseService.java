@@ -5,7 +5,7 @@ import com.oniesoft.model.TestCase;
 import java.util.List;
 
 public interface TestCaseService {
-    TestCase createTestCase(TestCase testCase,long projectId);
+    TestCase createTestCase(TestCase testCase,long projectId) throws Exception;
     TestCase updateTestCase(TestCase testCase);
     TestCase getTestCaseById(Long id);
     List<TestCase> getAllTestCases();

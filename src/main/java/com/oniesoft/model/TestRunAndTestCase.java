@@ -14,8 +14,7 @@ public class TestRunAndTestCase {
 
     @ManyToOne
     @JoinColumn(name = "test_case_id", nullable = false)
-    private TestCase testCase;
-
+    private TestRunAndCase testCase;
     public TestRunAndTestCase() {
     }
 
@@ -35,11 +34,11 @@ public class TestRunAndTestCase {
         this.testRun = testRun;
     }
 
-    public TestCase getTestCase() {
+    public TestRunAndCase getTestCase() {
         return testCase;
     }
 
-    public void setTestCase(TestCase testCase) {
+    public void setTestCase(TestRunAndCase testCase) {
         this.testCase = testCase;
     }
 

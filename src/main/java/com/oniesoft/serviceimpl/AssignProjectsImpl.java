@@ -28,12 +28,12 @@ public class AssignProjectsImpl implements AssignProjectsService {
     public List<ProjectUsers> assignProjects(ProjectUserReq projectUserReq) {
         // Fetch the existing TestRun by ID
         Project project = projectRepository.findById(projectUserReq.getProjectId())
-                .orElseThrow(() -> new ResourceNotFoundException("Register not found with ID: " + projectUserReq.getProjectId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with ID: " + projectUserReq.getProjectId()));
         List<ProjectUsers> ele=new ArrayList<>();
         // Link each TestCase to the existing TestRun
         for (int registerId : projectUserReq.getRegisterIds()) {
             Register register = registerRepo.findById(registerId)
-                    .orElseThrow(() -> new ResourceNotFoundException("project not found with ID: " + registerId));
+                    .orElseThrow(() -> new ResourceNotFoundException("Register not found with ID: " + registerId));
 
             // Create a new TestRunAndTestCase link
             ProjectUsers link = new ProjectUsers();
@@ -115,6 +115,10 @@ public List<ProjectDTO> getAllUnMappedRegisters(int registerId, int branchId) {
 
     return unMappedProjects;
 }
-
+@Override
+    public String removeUserFromProject(int registerId, Long projectId) {
+        projectUsersRepo.deleteByRegisterIdAndProjectId(registerId, projectId);
+        return  "DeletedSuccessFully";
+    }
 
 }

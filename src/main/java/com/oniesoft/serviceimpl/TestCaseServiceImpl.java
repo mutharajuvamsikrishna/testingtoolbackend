@@ -23,15 +23,22 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private ProjectRepository projectRepository;
     @Override
-    public TestCase createTestCase(TestCase testCase,long projectId) {
+    public TestCase createTestCase(TestCase testCase,long projectId) throws Exception {
     	 Project project = projectRepository.findById(projectId)
                  .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
-testCase.setProject(project);
-        testCase.setCreatedAt(LocalDateTime.now());
-        testCase.setUpdatedAt(LocalDateTime.now());
-        testCase.setProject(project);
-        testCase.setStatus("New");
-        return testCaseRepository.save(testCase);
+         System.out.println(testCase.getAutomationId());
+         System.out.println(projectId);
+         TestCase testCase1=testCaseRepository.findByProjectIdAndAutomationId(projectId,testCase.getAutomationId());
+         if(testCase1==null) {
+             testCase.setProject(project);
+             testCase.setCreatedAt(LocalDateTime.now());
+             testCase.setUpdatedAt(LocalDateTime.now());
+             testCase.setProject(project);
+
+             return testCaseRepository.save(testCase);
+         }else{
+             throw new Exception("Automation Id is Already Exists");
+         }
     }
 
     @Override
@@ -39,7 +46,7 @@ testCase.setProject(project);
         TestCase existingTestCase = testCaseRepository.findById(testCase.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TestCase not found"));
         existingTestCase.setTestCaseName(testCase.getTestCaseName());
-        existingTestCase.setStatus(testCase.getStatus());
+
         existingTestCase.setAuthor(testCase.getAuthor());
         existingTestCase.setAutomationId(testCase.getAutomationId());
         existingTestCase.setFeature(testCase.getFeature());

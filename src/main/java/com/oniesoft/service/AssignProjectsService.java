@@ -26,4 +26,5 @@ public interface AssignProjectsService {
     List<ProjectDTO> getAllUnMappedRegisters(int registerId, int branchId);
 
 
+    String removeUserFromProject(int registerId, Long projectId);
 }
