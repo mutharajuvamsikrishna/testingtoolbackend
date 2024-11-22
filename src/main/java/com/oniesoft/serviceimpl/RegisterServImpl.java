@@ -50,6 +50,7 @@ public class RegisterServImpl implements RegisterService {
     @Override
     public Register saveRegisters(Register register) throws Exception {
         Register findRegister=registerRepo.findByEmpEmail(register.getEmpEmail());
+        System.out.println(register);
         if (findRegister==null) {
             register.setStatus(true);
             register.setPassword(passwordEncoder.encode(register.getPassword()));
