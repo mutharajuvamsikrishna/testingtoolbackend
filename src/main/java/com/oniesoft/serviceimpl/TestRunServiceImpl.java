@@ -156,7 +156,10 @@ private ProjectRepository projectRepository;
     private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String mavenPath,String ipAddress) {
         try {
             // Define the Windows service endpoint
-            String windowsServiceUrl = "http://" + ipAddress + ":/run-tests";
+//            String windowsServiceUrl = "http://" + ipAddress + ":3232/run-tests";
+
+          String windowsServiceUrl="http://" + ipAddress + ":3232/run-tests";
+            System.out.println(windowsServiceUrl);
 System.out.println(mavenPath);
             // Create the payload
             Map<String, Object> payload = new HashMap<>();
