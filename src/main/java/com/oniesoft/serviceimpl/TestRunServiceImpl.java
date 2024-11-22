@@ -134,9 +134,9 @@ private ProjectRepository projectRepository;
             throw new Exception("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
         String projectPath = projectOptional.get().getProjectDir();
-        String mavenPath=projectOptional.get().getMvnPath();
+
         // Step 5: Send Payload to Windows Service
-        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,mavenPath,ipAddress);
+        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,ipAddress);
 
         // Step 6: Determine Status Based on Service Response
         String status;
@@ -153,19 +153,17 @@ private ProjectRepository projectRepository;
         return "Test cases integration " + status + ". Service response: " + serviceResponse;
     }
 
-    private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String mavenPath,String ipAddress) {
+    private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String ipAddress) {
         String windowsServiceUrl="http://" + ipAddress + ":3232/run-tests";
         try {
             // Define the Windows service endpoint
 //            String windowsServiceUrl = "http://" + ipAddress + ":3232/run-tests";
             System.out.println(windowsServiceUrl);
-System.out.println(mavenPath);
             // Create the payload
             Map<String, Object> payload = new HashMap<>();
             payload.put("testRunId", testRunId);
             payload.put("automationIds", automationIds);
             payload.put("projectPath", projectPath);
-            payload.put("mavenPath",mavenPath);
             // Send the payload using an HTTP client
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
