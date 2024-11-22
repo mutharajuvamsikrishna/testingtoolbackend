@@ -125,7 +125,7 @@ private ProjectRepository projectRepository;
 
         // Step 3: Prepare Automation IDs (testCaseIds)
         String automationIds = testRunAndCases.stream()
-                .map(testCase -> String.valueOf(testCase.getId()))
+                .map(testCase -> String.valueOf(testCase.getAutomationId()))
                 .collect(Collectors.joining(","));
 
         // Step 4: Fetch Project Details
@@ -154,11 +154,10 @@ private ProjectRepository projectRepository;
     }
 
     private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String mavenPath,String ipAddress) {
+        String windowsServiceUrl="http://" + ipAddress + ":3232/run-tests";
         try {
             // Define the Windows service endpoint
 //            String windowsServiceUrl = "http://" + ipAddress + ":3232/run-tests";
-
-          String windowsServiceUrl="http://" + ipAddress + ":3232/run-tests";
             System.out.println(windowsServiceUrl);
 System.out.println(mavenPath);
             // Create the payload
@@ -171,7 +170,6 @@ System.out.println(mavenPath);
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(windowsServiceUrl))
-                    .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(payload)))
                     .build();
 
@@ -180,7 +178,7 @@ System.out.println(mavenPath);
             // Return the response from the service
             return response.body();
         } catch (Exception e) {
-            return "Error communicating with Windows service: " + e.getMessage();
+            return "Error communicating with Windows service : "+" for Windows Service "+windowsServiceUrl +" Exception is "+e;
         }
     }
 
