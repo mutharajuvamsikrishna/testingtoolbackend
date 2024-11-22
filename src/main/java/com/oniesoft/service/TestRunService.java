@@ -23,8 +23,7 @@ public interface TestRunService {
     List<TestCase> getAllUnMappedTestCases(int testRunId,long projectid);
 
 
-
-    String integrateTestCasesWithTestingTool(int testRunId) throws Exception;
+    String integrateTestCasesWithTestingTool(int testRunId, String ipAddress) throws Exception;
 
     String testResultsAdd(TestResultDto testResultDto);
 

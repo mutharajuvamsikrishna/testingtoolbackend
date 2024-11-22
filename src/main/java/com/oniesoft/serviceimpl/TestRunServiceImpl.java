@@ -1,6 +1,7 @@
 package com.oniesoft.serviceimpl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.exception.ResourceNotFoundException;
@@ -11,15 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,7 +105,7 @@ private ProjectRepository projectRepository;
 
 
     @Override
-    public String integrateTestCasesWithTestingTool(int testRunId) throws Exception {
+    public String integrateTestCasesWithTestingTool(int testRunId, String ipAddress) throws Exception {
         // Step 1: Fetch TestRun
         Optional<TestRun> testRunOptional = testRunRepo.findById(testRunId);
         if (testRunOptional.isEmpty()) {
@@ -124,68 +123,61 @@ private ProjectRepository projectRepository;
             return "No test cases found for TestRun ID: " + testRunId;
         }
 
-        // Step 3: Prepare Test Case IDs
-        String testCaseIds = testRunAndCases.stream()
+        // Step 3: Prepare Automation IDs (testCaseIds)
+        String automationIds = testRunAndCases.stream()
                 .map(testCase -> String.valueOf(testCase.getId()))
                 .collect(Collectors.joining(","));
 
-        // Fetch project details
-        Optional<Project> project = projectRepository.findById(testRun.getProjectId());
-        if (project.get().getProjectDir()!=null) {
-            String mavenProjectPath = project.get().getProjectDir();
-
-            // Step 4: Trigger Maven Tests with testRunId and testCaseIds
-            String mavenResponse = triggerMavenTests(testRunId, testCaseIds, mavenProjectPath);
-
-            // Step 5: Determine Status Based on Maven Response
-            String status;
-            if (mavenResponse.contains("Maven tests executed successfully")) {
-                status = "Success";
-            } else {
-                status = "Fail";
-            }
-
-            // Step 6: Update TestRun Status and Save
-            testRun.setStatus(status);
-            testRunRepo.save(testRun);
-
-            return "Test cases integration " + status + ". Maven test result: " + mavenResponse;
-        } else {
+        // Step 4: Fetch Project Details
+        Optional<Project> projectOptional = projectRepository.findById(testRun.getProjectId());
+        if (projectOptional.isEmpty() || projectOptional.get().getProjectDir() == null) {
             throw new Exception("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
+        String projectPath = projectOptional.get().getProjectDir();
+        String mavenPath=projectOptional.get().getMvnPath();
+        // Step 5: Send Payload to Windows Service
+        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,mavenPath,ipAddress);
+
+        // Step 6: Determine Status Based on Service Response
+        String status;
+        if (serviceResponse.contains("Tests executed successfully")) {
+            status = "Success";
+        } else {
+            status = "Fail";
+        }
+
+        // Step 7: Update TestRun Status and Save
+        testRun.setStatus(status);
+        testRunRepo.save(testRun);
+
+        return "Test cases integration " + status + ". Service response: " + serviceResponse;
     }
 
-    private String triggerMavenTests(int testRunId, String testCaseIds, String mavenProjectPath) {
+    private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String mavenPath,String ipAddress) {
         try {
-            // Prepare the Maven command with testRunId and testCaseIds
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command("mvn", "test", "-P", "run",
-                    "-DtestRunId=" + testRunId,
-                    "-DtestCaseIds=" + testCaseIds);
+            // Define the Windows service endpoint
+            String windowsServiceUrl = "http://" + ipAddress + ":8089/executeTests";
+System.out.println(mavenPath);
+            // Create the payload
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("testRunId", testRunId);
+            payload.put("automationIds", automationIds);
+            payload.put("projectPath", projectPath);
+            payload.put("mavenPath",mavenPath);
+            // Send the payload using an HTTP client
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(windowsServiceUrl))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(payload)))
+                    .build();
 
-            System.out.println("Running Maven command with testRunId: " + testRunId + " and testCaseIds: " + testCaseIds);
-            processBuilder.directory(new File(mavenProjectPath)); // Maven project directory
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // Start the Maven process
-            Process process = processBuilder.start();
-
-            // Capture the output of the Maven test execution
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-
-            // Wait for the Maven process to complete
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                return "Maven tests executed successfully:\n" + output;
-            } else {
-                return "Maven tests failed with exit code " + exitCode + ":\n" + output;
-            }
+            // Return the response from the service
+            return response.body();
         } catch (Exception e) {
-            return "Error running Maven tests: " + e.getMessage();
+            return "Error communicating with Windows service: " + e.getMessage();
         }
     }
 

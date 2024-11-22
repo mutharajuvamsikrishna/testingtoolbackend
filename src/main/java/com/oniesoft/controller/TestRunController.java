@@ -50,11 +50,11 @@ public class TestRunController {
     public List<TestCase> getAllUnMappedTestCases(@RequestParam int testRunId,@RequestParam long projectId) {
         return testRunService.getAllUnMappedTestCases(testRunId,projectId);
     }
-    @PostMapping("/run/{testRunId}")
-    public ResponseEntity<String> runTestCases(@PathVariable int testRunId) {
+    @PostMapping("/run")
+    public ResponseEntity<String> runTestCases(@RequestParam int testRunId,@RequestParam String ipAddress) {
         try {
             // Call the service method to integrate test cases with the testing tool
-            String response = testRunService.integrateTestCasesWithTestingTool(testRunId);
+            String response = testRunService.integrateTestCasesWithTestingTool(testRunId,ipAddress);
             return ResponseEntity.ok(response); // Return successful response
         } catch (Exception e) {
             // Handle any exceptions by returning an appropriate error message
