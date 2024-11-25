@@ -24,7 +24,7 @@ public class Project {
 	private String projectName;
 	private LocalDateTime createdAt;
 	private String projectDir;
-	private String mvnPath;
+	private String ipAddress;
 	private LocalDateTime updatedAt;
 	private int branchId;
 	@OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch=FetchType.LAZY )
@@ -67,12 +67,12 @@ public Project(){
 		this.projectDir = projectDir;
 	}
 
-	public String getMvnPath() {
-		return mvnPath;
+	public String getIpAddress() {
+		return ipAddress;
 	}
 
-	public void setMvnPath(String mvnPath) {
-		this.mvnPath = mvnPath;
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
 
 	public LocalDateTime getUpdatedAt() {
@@ -106,7 +106,7 @@ public Project(){
 				", projectName='" + projectName + '\'' +
 				", createdAt=" + createdAt +
 				", projectDir='" + projectDir + '\'' +
-				", mvnPath='" + mvnPath + '\'' +
+				", ipAddress='" + ipAddress + '\'' +
 				", updatedAt=" + updatedAt +
 				", branchId=" + branchId +
 				", testCases=" + testCases +
