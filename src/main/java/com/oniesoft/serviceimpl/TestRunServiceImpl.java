@@ -34,7 +34,8 @@ public class TestRunServiceImpl implements TestRunService {
     TestRunAndCaseRepo testRunAndCaseRepo;
     @Autowired
    private TestResultsRepo testResultsRepo;
-
+@Autowired
+private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
 @Autowired
 private ProjectRepository projectRepository;
 
@@ -186,6 +187,7 @@ private ProjectRepository projectRepository;
 
     @Override
     public TestRunAndCase testResultsAdd(TestResultDto testResultDto, SseEmitter emitter) throws Exception {
+        Optional<TestRun> testRun=testRunRepo.findById(testResultDto.getTestRunId());
         TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(testResultDto.getTestRunId(), testResultDto.getAutomationId());
 
         if (existingTestRunAndCase != null) {
@@ -201,9 +203,11 @@ private ProjectRepository projectRepository;
             testResults.setUpdatedAt(LocalDateTime.now());
             testResults.setExcuteTime(testResultDto.getExcuteTime());
             testResults.setStatus(testResultDto.getStatus());
-            testResults.setTestRunId(testResultDto.getTestRunId());
-            testResultsRepo.save(testResults);
-
+        TestResults testResults1= testResultsRepo.save(testResults);
+        TestRunAndTestResults testRunAndTestResults=new TestRunAndTestResults();
+         testRunAndTestResults.setTestResults(testResults1);
+         testRunAndTestResults.setTestRun(testRun.get());
+         testRunAndTestResultsRepo.save(testRunAndTestResults);
             // Send real-time updates via SSE
             if (emitter != null) {
                 // Send the updated result to the client
