@@ -206,7 +206,9 @@ private ProjectRepository projectRepository;
 
             // Send real-time updates via SSE
             if (emitter != null) {
-                emitter.send("Test case processed: " + updatedTestRunAndCase.getTestCaseName());
+                // Send the updated result to the client
+                String updateMessage = "Test case " + updatedTestRunAndCase.getTestCaseName() + " status updated to " + updatedTestRunAndCase.getStatus();
+                emitter.send(updateMessage);
             }
 
             return updatedTestRunAndCase;
@@ -219,6 +221,7 @@ private ProjectRepository projectRepository;
                     " and AutomationId: " + testResultDto.getAutomationId());
         }
     }
+
 
 }
 

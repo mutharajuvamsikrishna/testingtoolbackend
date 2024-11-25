@@ -61,27 +61,6 @@ public class TestRunController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }
     }
-    @GetMapping("/stream-testcase-updates")
-    public SseEmitter streamTestCaseUpdates() {
-        SseEmitter emitter = new SseEmitter();
-
-        // Run a background task to simulate sending updates
-        Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                for (int i = 0; i < 10; i++) { // Replace this with actual test case update logic
-                    String update = "Update for test case " + i;
-                    emitter.send(update); // Send each update to the client
-                    Thread.sleep(1000); // Simulate delay
-                }
-                emitter.complete(); // Complete the SSE stream when done
-            } catch (Exception e) {
-                emitter.completeWithError(e); // Handle errors
-            }
-        });
-
-        return emitter;
-    }
-
 
     @PutMapping("/addtestresults")
     public SseEmitter addTestResults(@RequestBody TestResultDto testResultDto) {
@@ -104,5 +83,6 @@ public class TestRunController {
 
         return emitter;
     }
+
 
 }
