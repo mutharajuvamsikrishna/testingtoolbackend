@@ -4,21 +4,22 @@ import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.model.*;
 
 import com.oniesoft.service.TestRunService;
+import com.oniesoft.serviceimpl.SseEmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Executors;
+
 
 @RestController
 @RequestMapping("/testrun/v1")
 public class TestRunController {
     @Autowired
     private TestRunService testRunService;
+    private SseEmitterService sseEmitterService;
+
     @PostMapping("/createtestrun")
     public  ResponseEntity<TestRun> createTestRun(@RequestBody TestRun testRun){
         TestRun testRun1=testRunService.createTestRun(testRun);
@@ -61,28 +62,24 @@ public class TestRunController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }
     }
+    @GetMapping("/test-results-updates")
+    public SseEmitter getTestResultsUpdates() {
+        return sseEmitterService.addEmitter();
+    }
 
     @PutMapping("/addtestresults")
-    public SseEmitter addTestResults(@RequestBody TestResultDto testResultDto) {
-        SseEmitter emitter = new SseEmitter();
-
-        Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                // Call the service method to process the test results with SSE
-                testRunService.testResultsAdd(testResultDto, emitter);
-                emitter.complete();
-            } catch (Exception e) {
-                try {
-                    emitter.send("An error occurred: " + e.getMessage());
-                } catch (IOException ioException) {
-                    // Log the error
-                }
-                emitter.completeWithError(e);
-            }
-        });
-
-        return emitter;
+    public ResponseEntity<?> addTestResults(@RequestBody TestResultDto testResultDto) {
+        try {
+            TestRunAndCase testRunAndCase = testRunService.testResultsAdd(testResultDto);
+            System.out.println("Test case updated: " + testRunAndCase);
+            return ResponseEntity.ok(testRunAndCase);
+        } catch (Exception e) {
+            System.err.println("Failed to update test case: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Updated: " + e.getMessage());
+        }
     }
+
+
 
 
 }

@@ -2,6 +2,7 @@ package com.oniesoft.serviceimpl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oniesoft.controller.TestRunController;
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.exception.ResourceNotFoundException;
@@ -38,7 +39,8 @@ public class TestRunServiceImpl implements TestRunService {
 private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
 @Autowired
 private ProjectRepository projectRepository;
-
+@Autowired
+private SseEmitterService sseEmitterService;
     @Override
     public TestRun createTestRun(TestRun testRun){
         testRun.setCreatedAt(LocalDateTime.now());
@@ -143,19 +145,7 @@ private ProjectRepository projectRepository;
         // Step 5: Send Payload to Windows Service
         String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,ipAddress);
 
-        // Step 6: Determine Status Based on Service Response
-        String status;
-        if (serviceResponse.contains("Tests executed successfully")) {
-            status = "Success";
-        } else {
-            status = "Fail";
-        }
-
-        // Step 7: Update TestRun Status and Save
-        testRun.setStatus(status);
-        testRunRepo.save(testRun);
-
-        return "Test cases integration " + status + ". Service response: " + serviceResponse;
+        return "Test cases integration "  + ". Service response: " + serviceResponse;
     }
 
     private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String ipAddress) {
@@ -185,9 +175,10 @@ private ProjectRepository projectRepository;
         }
     }
 
+
     @Override
-    public TestRunAndCase testResultsAdd(TestResultDto testResultDto, SseEmitter emitter) throws Exception {
-        Optional<TestRun> testRun=testRunRepo.findById(testResultDto.getTestRunId());
+    public TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception {
+        Optional<TestRun> testRun = testRunRepo.findById(testResultDto.getTestRunId());
         TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(testResultDto.getTestRunId(), testResultDto.getAutomationId());
 
         if (existingTestRunAndCase != null) {
@@ -203,24 +194,20 @@ private ProjectRepository projectRepository;
             testResults.setUpdatedAt(LocalDateTime.now());
             testResults.setExcuteTime(testResultDto.getExcuteTime());
             testResults.setStatus(testResultDto.getStatus());
-        TestResults testResults1= testResultsRepo.save(testResults);
-        TestRunAndTestResults testRunAndTestResults=new TestRunAndTestResults();
-         testRunAndTestResults.setTestResults(testResults1);
-         testRunAndTestResults.setTestRun(testRun.get());
-         testRunAndTestResultsRepo.save(testRunAndTestResults);
-            // Send real-time updates via SSE
-            if (emitter != null) {
-                // Send the updated result to the client
-                String updateMessage = "Test case " + updatedTestRunAndCase.getTestCaseName() + " status updated to " + updatedTestRunAndCase.getStatus();
-                emitter.send(updateMessage);
-            }
+
+            TestResults testResults1 = testResultsRepo.save(testResults);
+            TestRunAndTestResults testRunAndTestResults = new TestRunAndTestResults();
+            testRunAndTestResults.setTestResults(testResults1);
+            testRunAndTestResults.setTestRun(testRun.get());
+            testRunAndTestResultsRepo.save(testRunAndTestResults);
+
+            // Broadcast real-time updates
+            String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() +
+                    " status updated to " + updatedTestRunAndCase.getStatus();
+            sseEmitterService.sendUpdate(updateMessage);
 
             return updatedTestRunAndCase;
         } else {
-            if (emitter != null) {
-                emitter.send("Error: No TestRunAndCase found for TestRunId: " + testResultDto.getTestRunId() +
-                        " and AutomationId: " + testResultDto.getAutomationId());
-            }
             throw new Exception("No TestRunAndCase found for TestRunId: " + testResultDto.getTestRunId() +
                     " and AutomationId: " + testResultDto.getAutomationId());
         }
