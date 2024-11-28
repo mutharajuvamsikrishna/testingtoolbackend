@@ -2,7 +2,7 @@ package com.oniesoft.serviceimpl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oniesoft.controller.TestRunController;
+
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.exception.ResourceNotFoundException;
@@ -12,7 +12,7 @@ import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -39,8 +39,8 @@ public class TestRunServiceImpl implements TestRunService {
 private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
 @Autowired
 private ProjectRepository projectRepository;
-@Autowired
-private SseEmitterService sseEmitterService;
+
+
     @Override
     public TestRun createTestRun(TestRun testRun){
         testRun.setCreatedAt(LocalDateTime.now());
@@ -72,9 +72,7 @@ private SseEmitterService sseEmitterService;
             link.setTestRun(testRun);
             link.setTestCase(testRunAndCase1);
              ele.add(link);
-            // Save the link in the TestRunAndTestCase repository
             testRunAndTestCaseRepo.save(link);
-
         }
 
         return ele;
@@ -176,43 +174,48 @@ private SseEmitterService sseEmitterService;
     }
 
 
-    @Override
     public TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception {
-        Optional<TestRun> testRun = testRunRepo.findById(testResultDto.getTestRunId());
-        TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(testResultDto.getTestRunId(), testResultDto.getAutomationId());
+        Optional<TestRun> testRunOpt = testRunRepo.findById(testResultDto.getTestRunId());
 
-        if (existingTestRunAndCase != null) {
-            existingTestRunAndCase.setStatus(testResultDto.getStatus());
-            TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
+        if (testRunOpt.isPresent()) {
+            TestRun testRun = testRunOpt.get();
 
-            TestResults testResults = new TestResults();
-            testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
-            testResults.setAuthor(updatedTestRunAndCase.getAuthor());
-            testResults.setAutomationId(updatedTestRunAndCase.getAutomationId());
-            testResults.setFeature(updatedTestRunAndCase.getFeature());
-            testResults.setCreatedAt(LocalDateTime.now());
-            testResults.setUpdatedAt(LocalDateTime.now());
-            testResults.setExcuteTime(testResultDto.getExcuteTime());
-            testResults.setStatus(testResultDto.getStatus());
+            TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(
+                    testResultDto.getTestRunId(), testResultDto.getAutomationId());
 
-            TestResults testResults1 = testResultsRepo.save(testResults);
-            TestRunAndTestResults testRunAndTestResults = new TestRunAndTestResults();
-            testRunAndTestResults.setTestResults(testResults1);
-            testRunAndTestResults.setTestRun(testRun.get());
-            testRunAndTestResultsRepo.save(testRunAndTestResults);
+            if (existingTestRunAndCase != null) {
+                existingTestRunAndCase.setStatus(testResultDto.getStatus());
+                TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
 
-            // Broadcast real-time updates
-            String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() +
-                    " status updated to " + updatedTestRunAndCase.getStatus();
-            sseEmitterService.sendUpdate(updateMessage);
+                TestResults testResults = new TestResults();
+                testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
+                testResults.setAuthor(updatedTestRunAndCase.getAuthor());
+                testResults.setAutomationId(updatedTestRunAndCase.getAutomationId());
+                testResults.setFeature(updatedTestRunAndCase.getFeature());
+                testResults.setCreatedAt(LocalDateTime.now());
+                testResults.setUpdatedAt(LocalDateTime.now());
+                testResults.setExcuteTime(testResultDto.getExcuteTime());
+                testResults.setStatus(testResultDto.getStatus());
 
-            return updatedTestRunAndCase;
+                TestResults savedTestResults = testResultsRepo.save(testResults);
+
+                TestRunAndTestResults testRunAndTestResults = new TestRunAndTestResults();
+                testRunAndTestResults.setTestResults(savedTestResults);
+                testRunAndTestResults.setTestRun(testRun);
+                testRunAndTestResultsRepo.save(testRunAndTestResults);
+
+                String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() +
+                        " status updated to " + updatedTestRunAndCase.getStatus();
+//                webSocketHelper.broadcast(updateMessage);
+
+                return updatedTestRunAndCase;
+            } else {
+                throw new Exception("TestRunAndCase not found for TestRunId: " + testResultDto.getTestRunId() +
+                        " and AutomationId: " + testResultDto.getAutomationId());
+            }
         } else {
-            throw new Exception("No TestRunAndCase found for TestRunId: " + testResultDto.getTestRunId() +
-                    " and AutomationId: " + testResultDto.getAutomationId());
+            throw new Exception("TestRun not found for TestRunId: " + testResultDto.getTestRunId());
         }
     }
-
-
 }
 

@@ -4,7 +4,6 @@ import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.model.*;
 
 import com.oniesoft.service.TestRunService;
-import com.oniesoft.serviceimpl.SseEmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,7 @@ import java.util.List;
 public class TestRunController {
     @Autowired
     private TestRunService testRunService;
-    private SseEmitterService sseEmitterService;
+
 
     @PostMapping("/createtestrun")
     public  ResponseEntity<TestRun> createTestRun(@RequestBody TestRun testRun){
@@ -61,10 +60,6 @@ public class TestRunController {
             // Handle any exceptions by returning an appropriate error message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }
-    }
-    @GetMapping("/test-results-updates")
-    public SseEmitter getTestResultsUpdates() {
-        return sseEmitterService.addEmitter();
     }
 
     @PutMapping("/addtestresults")
