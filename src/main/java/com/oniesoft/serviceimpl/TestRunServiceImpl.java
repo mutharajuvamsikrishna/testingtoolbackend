@@ -173,7 +173,7 @@ private ProjectRepository projectRepository;
         }
     }
 
-
+@Autowired
     public TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception {
         Optional<TestRun> testRunOpt = testRunRepo.findById(testResultDto.getTestRunId());
 
@@ -185,8 +185,11 @@ private ProjectRepository projectRepository;
 
             if (existingTestRunAndCase != null) {
                 existingTestRunAndCase.setStatus(testResultDto.getStatus());
+                existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
 
+                TestCase testCase=testCaseRepository.findByProjectIdAndAutomationId(testRunOpt.get().getProjectId(), updatedTestRunAndCase.getAutomationId());
+                testCase.setUpdatedAt(updatedTestRunAndCase.getUpdatedAt());
                 TestResults testResults = new TestResults();
                 testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
                 testResults.setAuthor(updatedTestRunAndCase.getAuthor());
