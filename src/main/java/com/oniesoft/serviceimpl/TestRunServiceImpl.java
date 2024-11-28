@@ -3,6 +3,7 @@ package com.oniesoft.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.exception.ResourceNotFoundException;
@@ -173,7 +174,7 @@ private ProjectRepository projectRepository;
         }
     }
 
-@Autowired
+@Override
     public TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception {
         Optional<TestRun> testRunOpt = testRunRepo.findById(testResultDto.getTestRunId());
 
