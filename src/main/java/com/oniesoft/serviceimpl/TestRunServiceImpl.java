@@ -39,7 +39,7 @@ public class TestRunServiceImpl implements TestRunService {
 @Autowired
 private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
 @Autowired
-private ProjectRepository projectRepository;
+private UserConfigRepo userConfigRepo;
 
 
     @Override
@@ -65,6 +65,7 @@ private ProjectRepository projectRepository;
             testRunAndCase.setStatus("new");
             testRunAndCase.setAuthor(testCase.getAuthor());
             testRunAndCase.setAutomationId(testCase.getAutomationId());
+            testRunAndCase.setTestCaseId(testCase.getId());
              testRunAndCase.setFeature(testCase.getFeature());
             testRunAndCase.setCreatedAt(LocalDateTime.now());
             testRunAndCase.setUpdatedAt(LocalDateTime.now());
@@ -132,15 +133,15 @@ private ProjectRepository projectRepository;
                 .collect(Collectors.joining(","));
 
         // Step 4: Fetch Project Details
-        Optional<Project> projectOptional = projectRepository.findById(testRun.getProjectId());
-        if (projectOptional.isEmpty() || projectOptional.get().getProjectDir() == null) {
+       Optional<UserConfig> userConfig = userConfigRepo.findByProjectId(testRun.getProjectId());
+        if (userConfig.isEmpty() || userConfig.get().getProjectPath() == null) {
             throw new Exception("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
-        String projectPath = projectOptional.get().getProjectDir();
-        if (projectOptional.get().getIpAddress() == null) {
+        String projectPath = userConfig.get().getProjectPath();
+        if (userConfig.get().getIpAddress() == null) {
             throw new Exception("Project IpAddress Not Found for project ID: " + testRun.getProjectId());
         }
-  String ipAddress=projectOptional.get().getIpAddress();
+  String ipAddress=userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
         String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,ipAddress);
 
@@ -200,18 +201,14 @@ private ProjectRepository projectRepository;
                 testResults.setUpdatedAt(LocalDateTime.now());
                 testResults.setExcuteTime(testResultDto.getExcuteTime());
                 testResults.setStatus(testResultDto.getStatus());
-
                 TestResults savedTestResults = testResultsRepo.save(testResults);
-
                 TestRunAndTestResults testRunAndTestResults = new TestRunAndTestResults();
                 testRunAndTestResults.setTestResults(savedTestResults);
                 testRunAndTestResults.setTestRun(testRun);
                 testRunAndTestResultsRepo.save(testRunAndTestResults);
-
                 String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() +
                         " status updated to " + updatedTestRunAndCase.getStatus();
 //                webSocketHelper.broadcast(updateMessage);
-
                 return updatedTestRunAndCase;
             } else {
                 throw new Exception("TestRunAndCase not found for TestRunId: " + testResultDto.getTestRunId() +

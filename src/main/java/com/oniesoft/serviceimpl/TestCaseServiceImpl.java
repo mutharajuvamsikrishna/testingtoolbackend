@@ -1,8 +1,12 @@
 package com.oniesoft.serviceimpl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.oniesoft.model.TestRunAndCase;
+import com.oniesoft.repository.TestRunAndCaseRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private TestRunAndCaseRepo testRunAndCaseRepo;
     @Override
     public TestCase createTestCase(TestCase testCase,long projectId) throws Exception {
     	 Project project = projectRepository.findById(projectId)
@@ -42,15 +48,26 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
+    @Transactional
     public TestCase updateTestCase(TestCase testCase) {
         TestCase existingTestCase = testCaseRepository.findById(testCase.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TestCase not found"));
         existingTestCase.setTestCaseName(testCase.getTestCaseName());
-
         existingTestCase.setAuthor(testCase.getAuthor());
         existingTestCase.setAutomationId(testCase.getAutomationId());
         existingTestCase.setFeature(testCase.getFeature());
         existingTestCase.setUpdatedAt(LocalDateTime.now());
+        List<TestRunAndCase> testRunAndCases = new ArrayList<>();
+        List<TestRunAndCase> testRunAndCase1=testRunAndCaseRepo.findByTestCaseId(testCase.getId());
+        for(TestRunAndCase testRunAndCase2:testRunAndCase1){
+            testRunAndCase2.setTestCaseName(testCase.getTestCaseName());
+            testRunAndCase2.setAuthor(testCase.getAuthor());
+            testRunAndCase2.setAutomationId(testCase.getAutomationId());
+            testRunAndCase2.setFeature(testCase.getFeature());
+            testRunAndCase2.setUpdatedAt(testCase.getUpdatedAt());
+            testRunAndCases.add(testRunAndCase2);
+        }
+        testRunAndCaseRepo.saveAll(testRunAndCases);
         return testCaseRepository.save(existingTestCase);
     }
 

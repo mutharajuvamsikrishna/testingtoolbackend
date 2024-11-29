@@ -33,9 +33,6 @@ public class ProjectServiceImp implements ProjectService {
 		Project updateProject = projectRepository.findById(project.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + project.getId()));
 	  updateProject.setProjectName(project.getProjectName());
-	  updateProject.setProjectDir(project.getProjectDir());
-	  updateProject.setIpAddress(project.getIpAddress());
-	  updateProject.setUpdatedAt(LocalDateTime.now());
 	  return projectRepository.save(updateProject);
 
 	}

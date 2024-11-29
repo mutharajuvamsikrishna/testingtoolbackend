@@ -23,8 +23,6 @@ public class Project {
 	private long id;
 	private String projectName;
 	private LocalDateTime createdAt;
-	private String projectDir;
-	private String ipAddress;
 	private LocalDateTime updatedAt;
 	private int branchId;
 	@OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch=FetchType.LAZY )
@@ -59,21 +57,6 @@ public Project(){
 		this.createdAt = createdAt;
 	}
 
-	public String getProjectDir() {
-		return projectDir;
-	}
-
-	public void setProjectDir(String projectDir) {
-		this.projectDir = projectDir;
-	}
-
-	public String getIpAddress() {
-		return ipAddress;
-	}
-
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
 
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
@@ -105,8 +88,6 @@ public Project(){
 				"id=" + id +
 				", projectName='" + projectName + '\'' +
 				", createdAt=" + createdAt +
-				", projectDir='" + projectDir + '\'' +
-				", ipAddress='" + ipAddress + '\'' +
 				", updatedAt=" + updatedAt +
 				", branchId=" + branchId +
 				", testCases=" + testCases +
