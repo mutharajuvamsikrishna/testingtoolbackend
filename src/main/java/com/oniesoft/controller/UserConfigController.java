@@ -15,7 +15,11 @@ public class UserConfigController {
     private UserConfigService userConfigService;
     @PostMapping("/save")
     public UserConfig userConfig(@RequestBody UserConfig userConfig){
-        return userConfigService.addOrUpdateConfig(userConfig);
+        try {
+            return userConfigService.addOrUpdateConfig(userConfig);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     @GetMapping("/getconfigbyid/{id}")
     public ResponseEntity<?> getById(@PathVariable int id) throws Exception {

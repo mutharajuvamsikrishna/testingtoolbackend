@@ -74,7 +74,16 @@ public class TestRunController {
         }
     }
 
+    @PostMapping("/cloneTestRun/{id}")
+    public ResponseEntity<List<TestRunAndTestCase>> cloneTestRun(@PathVariable int id, @RequestParam Long projectId) {
+        List<TestRunAndTestCase> ele = testRunService.cloneTestRun(id, projectId);
+        if (ele != null) {
+            return ResponseEntity.ok(ele);
 
+        } else {
+            return ResponseEntity.status(400).body(null);
+        }
+    }
 
 
 }

@@ -14,7 +14,7 @@ public interface TestCaseRepository extends JpaRepository<TestCase, Long> {
 
 
     TestCase findByProjectIdAndAutomationId(long projectId, String automationId);
-
+    TestCase findByAutomationId(String autoId);
 
 
 }

@@ -13,4 +13,6 @@ public interface UserConfigRepo extends JpaRepository<UserConfig,Integer> {
     Optional<UserConfig> findByProjectId(Long projectId);
 
     List<UserConfig> findByUserId(int userId);
+
+    UserConfig findByUserIdAndProjectId(int userId, int projectId);
 }

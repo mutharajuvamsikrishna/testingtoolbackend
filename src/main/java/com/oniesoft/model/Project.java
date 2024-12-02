@@ -12,71 +12,69 @@ public class Project {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private String projectName;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
-	private int branchId;
-	@OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch=FetchType.LAZY )
+
+	private String projectName; // Default project name
+	private  LocalDateTime createdAt; // Default to current timestamp
+	private LocalDateTime updatedAt; // Default to current timestamp
+	private int branchId; // Default branch ID
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private List<TestCase>  testCases;
+	private List<TestCase> testCases;
 
-	private String url;
+	private String url; // Default URL
 	private String apiBaseURL;
-
 	// BASIC AUTH CONFIGURATIONS
-	@Column(nullable = true)
-	private boolean basicAuth;
-	private String basicAuthUser;
-	private String basicAuthPassword;
+	@Column(columnDefinition = "boolean default false")
+	private boolean basicAuth = false;
+	private String basicAuthUser; // Default empty
+	private String basicAuthPassword; // Default empty
 
 	// RUNNER CONFIGURATIONS
-	private String browser;
-	@Column(nullable = true)
-	private boolean headLess;
-	@Column(nullable = true)
-	private boolean traceView;
-	@Column(nullable = true)
-	private boolean enableRecording;
-	private String testType;
-	@Column(nullable = true)
-	private int shortWait;
-	@Column(nullable = true)
-	private int customWait;
-	@Column(nullable = true)
-	private int retryCount;
+	private String browser = "chrome"; // Default browser
+	@Column(columnDefinition = "boolean default false")
+	private boolean headLess = false;
+	@Column(columnDefinition = "boolean default false")
+	private boolean traceView = false;
+	@Column(columnDefinition = "boolean default false")
+	private boolean enableRecording = false;
+	private String testType; // Default test type
+	@Column(columnDefinition = "int default 10")
+	private int shortWait = 10; // Default short wait in seconds
+	@Column(columnDefinition = "int default 30")
+	private int customWait = 30; // Default custom wait in seconds
+	@Column(columnDefinition = "int default 3")
+	private int retryCount = 3; // Default retry count
 
 	// REPORT CONFIGURATIONS
-	@Column(nullable = true)
-	private boolean enableLiveReporting;
-	private String elasticSearchURL;
-	@Column(nullable = true)
+	@Column(columnDefinition = "boolean default false")
+	private boolean enableLiveReporting = false;
+	private String elasticSearchURL; // Default empty
+	@Column(columnDefinition = "boolean default false")
 	private boolean overrideReport;
 
 	// TEAMS NOTIFICATION
-	@Column(nullable = true)
+	@Column(columnDefinition = "boolean default false")
 	private boolean notifyTeams;
-	@Column(nullable = true)
-	private int notifyBlockerCount;
-	@Column(nullable = true)
-	private int notifyCriticalCount;
-	@Column(nullable = true)
-	private int notifyMajorCount;
+	@Column(columnDefinition = "int default 5")
+	private int notifyBlockerCount = 5; // Default blocker count threshold
+	@Column(columnDefinition = "int default 10")
+	private int notifyCriticalCount = 10; // Default critical count threshold
+	@Column(columnDefinition = "int default 20")
+	private int notifyMajorCount = 20; // Default major count threshold
 
 	// EMAIL NOTIFICATION
-	@Column(nullable = true)
-	private boolean sendEmailReport;
-
-	private String emailReportTo;
+	@Column(columnDefinition = "boolean default false")
+	private boolean sendEmailReport = false;
+	private String emailReportTo; // Default empty
 
 	// JIRA CONFIGURATIONS
-	@Column(nullable = true)
-	private boolean createJiraIssues;
-
-	private String jiraUserName;
-
-	private String jiraPassword;
-	private String jiraURL;
-	private String jiraProjectKey;
+	@Column(columnDefinition = "boolean default false")
+	private boolean createJiraIssues = false;
+	private String jiraUserName; // Default empty
+	private String jiraPassword; // Default empty
+	private String jiraURL; // Default empty
+	private String jiraProjectKey; // Default empty
 public Project(){
 
 }

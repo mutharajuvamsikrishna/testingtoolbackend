@@ -10,7 +10,6 @@ import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.*;
 import com.oniesoft.repository.*;
 import com.oniesoft.service.TestRunService;
-import jakarta.validation.Payload;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -226,6 +225,24 @@ private UserConfigRepo userConfigRepo;
         } else {
             throw new Exception("TestRun not found for TestRunId: " + testResultDto.getTestRunId());
         }
+    }
+//    Clone TestRun
+
+    @Override
+    public List<TestRunAndTestCase> cloneTestRun(int id, Long projectId) {
+        TestRun testRunOld = this.getTestRunById(projectId).stream().filter(run -> run.getId() == id).toList().get(0);
+        List<TestRunAndCase> testCasesByTestRunId = this.getTestCasesByTestRunId(id);
+        TestRun testRunNew =new TestRun();
+        testRunNew.setTestRunName(testRunOld.getTestRunName() + " - Clone");
+        testRunNew.setCreatedBy(testRunOld.getCreatedBy());
+        testRunNew.setProjectId(testRunOld.getProjectId());
+        TestRun testRun = this.createTestRun(testRunNew);
+        List<Long> caseIds = testCasesByTestRunId.stream().map(TestRunAndCase::getAutomationId).map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
+        TestRunRequest testRunRequest = new TestRunRequest();
+        testRunRequest.setTestRunId(testRun.getId());
+        testRunRequest.setTestRunName(testRun.getTestRunName());
+        testRunRequest.setTestCaseId(caseIds);
+        return this.addTestRun(testRunRequest);
     }
 }
 

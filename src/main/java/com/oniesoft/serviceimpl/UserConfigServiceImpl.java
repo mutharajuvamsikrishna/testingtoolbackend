@@ -16,8 +16,13 @@ public class UserConfigServiceImpl implements UserConfigService {
     private UserConfigRepo userConfigRepo;
 
     @Override
-    public UserConfig addOrUpdateConfig(UserConfig userConfig){
-        return userConfigRepo.save(userConfig);
+    public UserConfig addOrUpdateConfig(UserConfig userConfig) throws Exception {
+        UserConfig userConfig1=userConfigRepo.findByUserIdAndProjectId(userConfig.getUserId(),userConfig.getProjectId());
+        if(userConfig1!=null) {
+            return userConfigRepo.save(userConfig);
+        }else {
+            throw new Exception("Project Configuration Already Created");
+        }
     }
 
     @Override

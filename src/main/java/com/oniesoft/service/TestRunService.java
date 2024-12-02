@@ -25,4 +25,6 @@ public interface TestRunService {
 
 
     TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception;
+
+    List<TestRunAndTestCase> cloneTestRun(int id, Long projectId);
 }
