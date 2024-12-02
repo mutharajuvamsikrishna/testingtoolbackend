@@ -10,6 +10,7 @@ public class UserConfig {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int userId;
+    private String projectName;
     private int projectId;
     private String ipAddress;
     private String projectPath;
@@ -31,6 +32,14 @@ public UserConfig(){
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public int getProjectId() {
@@ -62,6 +71,7 @@ public UserConfig(){
         return "UserConfig{" +
                 "id=" + id +
                 ", userId=" + userId +
+                ", projectName='" + projectName + '\'' +
                 ", projectId=" + projectId +
                 ", ipAddress='" + ipAddress + '\'' +
                 ", projectPath='" + projectPath + '\'' +

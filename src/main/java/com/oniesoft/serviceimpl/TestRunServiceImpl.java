@@ -10,6 +10,7 @@ import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.*;
 import com.oniesoft.repository.*;
 import com.oniesoft.service.TestRunService;
+import jakarta.validation.Payload;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -143,22 +144,28 @@ private UserConfigRepo userConfigRepo;
         }
   String ipAddress=userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
-        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,ipAddress);
+        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,ipAddress,testRun.getProjectId());
 
         return "Test cases integration "  + ". Service response: " + serviceResponse;
     }
 
-    private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath,String ipAddress) {
-        String windowsServiceUrl="http://" + ipAddress + ":3232/run-tests";
+    private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath, String ipAddress, Long projectId) {
+        String windowsServiceUrl = "http://" + ipAddress + ":3232/run-tests";
         try {
-            // Define the Windows service endpoint
-//            String windowsServiceUrl = "http://" + ipAddress + ":3232/run-tests";
+            // Print out the service URL
             System.out.println(windowsServiceUrl);
+
             // Create the payload
             Map<String, Object> payload = new HashMap<>();
+
+            // Add other fields to the payload
             payload.put("testRunId", testRunId);
             payload.put("automationIds", automationIds);
             payload.put("projectPath", projectPath);
+
+            // Convert Long to String before adding to the payload
+            payload.put("projectId", projectId.toString()); // Converts Long to String
+
             // Send the payload using an HTTP client
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -171,11 +178,13 @@ private UserConfigRepo userConfigRepo;
             // Return the response from the service
             return response.body();
         } catch (Exception e) {
-            return "Error communicating with Windows service : "+" for Windows Service "+windowsServiceUrl +" Exception is "+e;
+            // Return an error message if something goes wrong
+            return "Error communicating with Windows service : " + " for Windows Service " + windowsServiceUrl + " Exception is " + e;
         }
     }
 
-@Override
+
+    @Override
     public TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception {
         Optional<TestRun> testRunOpt = testRunRepo.findById(testResultDto.getTestRunId());
 
