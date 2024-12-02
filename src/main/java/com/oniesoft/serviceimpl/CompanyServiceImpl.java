@@ -14,7 +14,7 @@ public class CompanyServiceImpl implements CompanyService {
     private CompanyRepo companyRepo;
     @Override
     public Company createCompany(Company company) throws Exception {
-        Optional<Company> company1 = companyRepo.findById(company.getId());
+        Optional<Company> company1 = companyRepo.findByCmpNameAndCmpId(company.getCmpName(),company.getCmpId());
         if (company1.isPresent()) {
             throw new Exception("Company Already Registered");
         } else {

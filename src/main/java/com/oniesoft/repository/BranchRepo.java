@@ -9,4 +9,7 @@ public interface BranchRepo extends JpaRepository<Branch,Integer> {
     Branch findByBranchId(String branchId);
 
     List<Branch> findByCmpId(int id);
+
+
+    Branch findByBranchIdAndCmpIdAndBranchName(String branchId, int cmpId, String branchName);
 }

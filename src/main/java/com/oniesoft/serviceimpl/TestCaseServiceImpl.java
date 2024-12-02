@@ -32,8 +32,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     public TestCase createTestCase(TestCase testCase,long projectId) throws Exception {
     	 Project project = projectRepository.findById(projectId)
                  .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
-         System.out.println(testCase.getAutomationId());
-         System.out.println(projectId);
          TestCase testCase1=testCaseRepository.findByProjectIdAndAutomationId(projectId,testCase.getAutomationId());
          if(testCase1==null) {
              testCase.setProject(project);

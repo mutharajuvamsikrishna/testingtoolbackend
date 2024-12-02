@@ -17,12 +17,7 @@ public class UserConfigServiceImpl implements UserConfigService {
 
     @Override
     public UserConfig addOrUpdateConfig(UserConfig userConfig){
-        Optional<UserConfig> userConfig1=userConfigRepo.findById(userConfig.getId());
-        if(userConfig1.isPresent()) {
-            return userConfigRepo.save(userConfig);
-        }else{
-            return userConfigRepo.save(userConfig);
-        }
+        return userConfigRepo.save(userConfig);
     }
 
     @Override
@@ -43,5 +38,8 @@ public class UserConfigServiceImpl implements UserConfigService {
     public List<UserConfig> getAllConfig(){
       return userConfigRepo.findAll();
     }
-
+    @Override
+    public List<UserConfig> getAllUserConfigByUserId(int userId){
+        return userConfigRepo.findByUserId(userId);
+    }
 }

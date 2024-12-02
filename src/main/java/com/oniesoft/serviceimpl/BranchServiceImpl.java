@@ -14,7 +14,7 @@ public class BranchServiceImpl implements BranchService {
     private BranchRepo branchRepo;
 @Override
     public Branch addBranch(Branch branch) throws Exception {
-        Branch branch1 = branchRepo.findByBranchId(branch.getBranchId());
+        Branch branch1 = branchRepo.findByBranchIdAndCmpIdAndBranchName(branch.getBranchId(),branch.getCmpId(),branch.getBranchName());
         if (branch1 == null) {
             return branchRepo.save(branch);
         } else {

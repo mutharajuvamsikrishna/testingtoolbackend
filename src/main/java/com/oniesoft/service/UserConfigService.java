@@ -12,4 +12,7 @@ public interface UserConfigService {
     String deleteConfig(int id);
 
     List<UserConfig> getAllConfig();
+
+
+    List<UserConfig> getAllUserConfigByUserId(int userId);
 }

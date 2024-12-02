@@ -30,6 +30,10 @@ public class UserConfigController {
     public List<UserConfig> getAllConfig(){
         return userConfigService.getAllConfig();
     }
+    @GetMapping("/getconfigsbyuid/{userId}")
+    public List<UserConfig> getListConfigByUserId(@PathVariable int userId){
+        return userConfigService.getAllUserConfigByUserId(userId);
+    }
     @DeleteMapping("/deleteconfigbyid/{id}")
     public String deleteConfig(@PathVariable int id){
         String msg=userConfigService.deleteConfig(id);
