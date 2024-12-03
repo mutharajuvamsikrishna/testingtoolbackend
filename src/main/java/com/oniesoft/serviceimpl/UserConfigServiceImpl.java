@@ -16,15 +16,26 @@ public class UserConfigServiceImpl implements UserConfigService {
     private UserConfigRepo userConfigRepo;
 
     @Override
-    public UserConfig addOrUpdateConfig(UserConfig userConfig) throws Exception {
+    public UserConfig addOrUpdateConfig(UserConfig userConfig)  {
         UserConfig userConfig1=userConfigRepo.findByUserIdAndProjectId(userConfig.getUserId(),userConfig.getProjectId());
         if(userConfig1==null) {
             return userConfigRepo.save(userConfig);
         }else {
-            throw new Exception("Project Configuration Already Created");
+            userConfig1.setProjectName(userConfig.getProjectName());
+        userConfig1.setProjectPath(userConfig.getProjectPath());
+        userConfig1.setIpAddress(userConfig.getIpAddress());
+        return userConfigRepo.save(userConfig1);
         }
     }
-
+//    @Override
+//    public UserConfig UpdateConfig(UserConfig userConfig) throws Exception {
+//        UserConfig userConfig1=userConfigRepo.findByUserIdAndProjectId(userConfig.getUserId(),userConfig.getProjectId());
+//        if(userConfig1==null) {
+//            return userConfigRepo.save(userConfig);
+//        }else {
+//            throw new Exception("Project Configuration Already Created");
+//        }
+//    }
     @Override
     public UserConfig getConfigById(int id) throws Exception {
         Optional<UserConfig> userConfig= userConfigRepo.findById(id);

@@ -5,7 +5,7 @@ import com.oniesoft.model.UserConfig;
 import java.util.List;
 
 public interface UserConfigService {
-    UserConfig addOrUpdateConfig(UserConfig userConfig) throws Exception;
+    UserConfig addOrUpdateConfig(UserConfig userConfig);
 
     UserConfig getConfigById(int id) throws Exception;
 
