@@ -62,7 +62,7 @@ private UserConfigRepo userConfigRepo;
             TestRunAndCase testRunAndCase=new TestRunAndCase();
             testRunAndCase.setTestCaseName(testCase.getTestCaseName());
             testRunAndCase.setAutomationId(testCase.getAutomationId());
-            testRunAndCase.setStatus("new");
+            testRunAndCase.setStatus("New");
             testRunAndCase.setAuthor(testCase.getAuthor());
             testRunAndCase.setAutomationId(testCase.getAutomationId());
             testRunAndCase.setTestCaseId(testCase.getId());

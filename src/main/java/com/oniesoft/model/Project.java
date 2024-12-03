@@ -25,56 +25,56 @@ public class Project {
 	private String url; // Default URL
 	private String apiBaseURL;
 	// BASIC AUTH CONFIGURATIONS
-	@Column(columnDefinition = "boolean default false")
-	private boolean basicAuth = false;
-	private String basicAuthUser; // Default empty
-	private String basicAuthPassword; // Default empty
+	
+	private boolean basicAuth;
+	private String basicAuthUser; 
+	private String basicAuthPassword; 
 
 	// RUNNER CONFIGURATIONS
-	private String browser = "chrome"; // Default browser
-	@Column(columnDefinition = "boolean default false")
-	private boolean headLess = false;
-	@Column(columnDefinition = "boolean default false")
-	private boolean traceView = false;
-	@Column(columnDefinition = "boolean default false")
-	private boolean enableRecording = false;
-	private String testType; // Default test type
-	@Column(columnDefinition = "int default 10")
-	private int shortWait = 10; // Default short wait in seconds
-	@Column(columnDefinition = "int default 30")
-	private int customWait = 30; // Default custom wait in seconds
-	@Column(columnDefinition = "int default 3")
-	private int retryCount = 3; // Default retry count
+	private String browser;
+
+	private boolean headLess;
+	
+	private boolean traceView ;
+	
+	private boolean enableRecording;
+	private String testType;
+	
+	private int shortWait;
+	
+	private int customWait;
+
+	private int retryCount;
 
 	// REPORT CONFIGURATIONS
-	@Column(columnDefinition = "boolean default false")
-	private boolean enableLiveReporting = false;
-	private String elasticSearchURL; // Default empty
-	@Column(columnDefinition = "boolean default false")
+
+	private boolean enableLiveReporting;
+	private String elasticSearchURL; 
+	
 	private boolean overrideReport;
 
 	// TEAMS NOTIFICATION
-	@Column(columnDefinition = "boolean default false")
+	
 	private boolean notifyTeams;
-	@Column(columnDefinition = "int default 5")
-	private int notifyBlockerCount = 5; // Default blocker count threshold
-	@Column(columnDefinition = "int default 10")
-	private int notifyCriticalCount = 10; // Default critical count threshold
-	@Column(columnDefinition = "int default 20")
-	private int notifyMajorCount = 20; // Default major count threshold
+	
+	private int notifyBlockerCount;
+
+	private int notifyCriticalCount;
+	
+	private int notifyMajorCount;
 
 	// EMAIL NOTIFICATION
-	@Column(columnDefinition = "boolean default false")
-	private boolean sendEmailReport = false;
-	private String emailReportTo; // Default empty
+
+	private boolean sendEmailReport;
+	private String emailReportTo; 
 
 	// JIRA CONFIGURATIONS
-	@Column(columnDefinition = "boolean default false")
-	private boolean createJiraIssues = false;
-	private String jiraUserName; // Default empty
-	private String jiraPassword; // Default empty
-	private String jiraURL; // Default empty
-	private String jiraProjectKey; // Default empty
+	
+	private boolean createJiraIssues;
+	private String jiraUserName; 
+	private String jiraPassword; 
+	private String jiraURL; 
+	private String jiraProjectKey; 
 public Project(){
 
 }
