@@ -7,7 +7,7 @@ public class TestRunRequest {
     private String testRunName;
     private String startedBy;
     private String status;
-    private List<Long> testCaseId;
+    private List<String> testCaseId;
     public TestRunRequest(){
 
     }
@@ -44,13 +44,8 @@ public class TestRunRequest {
         this.status = status;
     }
 
-    public List<Long> getTestCaseId() {
-        return testCaseId;
-    }
-
-    public void setTestCaseId(List<Long> testCaseId) {
-        this.testCaseId = testCaseId;
-    }
+    public List<String> getTestCaseId() {    return testCaseId;}
+    public void setTestCaseId(List<String> testCaseId) {    this.testCaseId = testCaseId;}
 
     @Override
     public String toString() {

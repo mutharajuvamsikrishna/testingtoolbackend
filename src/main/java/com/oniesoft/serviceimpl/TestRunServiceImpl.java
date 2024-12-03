@@ -49,36 +49,80 @@ private UserConfigRepo userConfigRepo;
 
         return testRunRepo.save(testRun);
     }
-    @Override
-    public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
-        // Fetch the existing TestRun by ID
-        TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId())
-                .orElseThrow(() -> new ResourceNotFoundException("TestRun not found with ID: " + testRunRequest.getTestRunId()));
-        List<TestRunAndTestCase> ele=new ArrayList<>();
-        // Link each TestCase to the existing TestRun
-        for (Long testCaseId : testRunRequest.getTestCaseId()) {
-            TestCase testCase = testCaseRepository.findById(testCaseId)
-                    .orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
-            TestRunAndCase testRunAndCase=new TestRunAndCase();
-            testRunAndCase.setTestCaseName(testCase.getTestCaseName());
-            testRunAndCase.setAutomationId(testCase.getAutomationId());
-            testRunAndCase.setStatus("New");
-            testRunAndCase.setAuthor(testCase.getAuthor());
-            testRunAndCase.setAutomationId(testCase.getAutomationId());
-            testRunAndCase.setTestCaseId(testCase.getId());
-             testRunAndCase.setFeature(testCase.getFeature());
-            testRunAndCase.setCreatedAt(LocalDateTime.now());
-            testRunAndCase.setUpdatedAt(LocalDateTime.now());
-           TestRunAndCase testRunAndCase1=testRunAndCaseRepo.save(testRunAndCase);
-            TestRunAndTestCase link = new TestRunAndTestCase();
-            link.setTestRun(testRun);
-            link.setTestCase(testRunAndCase1);
-             ele.add(link);
-            testRunAndTestCaseRepo.save(link);
-        }
+//    @Override
+//    public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
+//        // Fetch the existing TestRun by ID
+//        TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId())
+//                .orElseThrow(() -> new ResourceNotFoundException("TestRun not found with ID: " + testRunRequest.getTestRunId()));
+//        List<TestRunAndTestCase> ele=new ArrayList<>();
+//        // Link each TestCase to the existing TestRun
+//        for (Long testCaseId : testRunRequest.getTestCaseId()) {
+//            TestCase testCase = testCaseRepository.findById(testCaseId)
+//                    .orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
+//            TestRunAndCase testRunAndCase=new TestRunAndCase();
+//            testRunAndCase.setTestCaseName(testCase.getTestCaseName());
+//            testRunAndCase.setAutomationId(testCase.getAutomationId());
+//            testRunAndCase.setStatus("New");
+//            testRunAndCase.setAuthor(testCase.getAuthor());
+//            testRunAndCase.setAutomationId(testCase.getAutomationId());
+//            testRunAndCase.setTestCaseId(testCase.getId());
+//             testRunAndCase.setFeature(testCase.getFeature());
+//            testRunAndCase.setCreatedAt(LocalDateTime.now());
+//            testRunAndCase.setUpdatedAt(LocalDateTime.now());
+//           TestRunAndCase testRunAndCase1=testRunAndCaseRepo.save(testRunAndCase);
+//            TestRunAndTestCase link = new TestRunAndTestCase();
+//            link.setTestRun(testRun);
+//            link.setTestCase(testRunAndCase1);
+//             ele.add(link);
+//            testRunAndTestCaseRepo.save(link);
+//        }
+//
+//        return ele;
+//    }
+@Override
+public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
+    // Fetch the existing TestRun by ID
+    TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId())
+            .orElseThrow(() -> new ResourceNotFoundException("TestRun not found with ID: " + testRunRequest.getTestRunId()));
 
-        return ele;
+    // Fetch test case of the run
+    List<TestRunAndCase> testCasesByTestRunId = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunRequest.getTestRunId());
+
+    // Delete all test cases in that run and their links
+    testCasesByTestRunId.forEach(testRunAndCase -> testRunAndTestCaseRepo.deleteTestRunAndTestCaseById(testRunAndCase.getId()));
+    testRunAndCaseRepo.deleteAllById(testCasesByTestRunId.stream().map(TestRunAndCase::getId).toList());
+
+
+
+    List<TestRunAndTestCase> ele = new ArrayList<>();
+
+    List<Long> testCaseIDs = testRunRequest.getTestCaseId().stream().map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
+
+    // Link each TestCase to the existing TestRun
+    for (Long testCaseId : testCaseIDs) {
+        TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
+        ;
+
+        TestRunAndCase testRunAndCase = new TestRunAndCase();
+        testRunAndCase.setTestCaseName(testCase.getTestCaseName());
+        testRunAndCase.setAutomationId(testCase.getAutomationId());
+        testRunAndCase.setStatus("New");
+        testRunAndCase.setAuthor(testCase.getAuthor());
+        testRunAndCase.setAutomationId(testCase.getAutomationId());
+        testRunAndCase.setTestCaseId(testCase.getId());
+        testRunAndCase.setFeature(testCase.getFeature());
+        testRunAndCase.setCreatedAt(LocalDateTime.now());
+        testRunAndCase.setUpdatedAt(LocalDateTime.now());
+        TestRunAndCase testRunAndCase1 = testRunAndCaseRepo.save(testRunAndCase);
+        TestRunAndTestCase link = new TestRunAndTestCase();
+        link.setTestRun(testRun);
+        link.setTestCase(testRunAndCase1);
+        ele.add(link);
+        testRunAndTestCaseRepo.save(link);
     }
+
+    return ele;
+}
     @Override
     public List<TestRun> getTestRunById(Long projectId){
 
@@ -237,7 +281,7 @@ private UserConfigRepo userConfigRepo;
         testRunNew.setCreatedBy(testRunOld.getCreatedBy());
         testRunNew.setProjectId(testRunOld.getProjectId());
         TestRun testRun = this.createTestRun(testRunNew);
-        List<Long> caseIds = testCasesByTestRunId.stream().map(TestRunAndCase::getAutomationId).map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
+        List<String> caseIds = testCasesByTestRunId.stream().map(TestRunAndCase::getAutomationId).toList();
         TestRunRequest testRunRequest = new TestRunRequest();
         testRunRequest.setTestRunId(testRun.getId());
         testRunRequest.setTestRunName(testRun.getTestRunName());
