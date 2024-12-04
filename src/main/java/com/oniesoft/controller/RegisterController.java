@@ -55,7 +55,10 @@ public class RegisterController {
 
         return registerService.getRegister(email);
     }
-
+  @GetMapping("/search")
+  public List<Register> searchRegister(@RequestParam String query){
+        return registerService.searchForRegister(query);
+  }
 
     @DeleteMapping("/deleteregister")
     public ResponseEntity<String> deleteRegister(@RequestParam int id) {

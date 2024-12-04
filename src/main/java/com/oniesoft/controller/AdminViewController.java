@@ -4,10 +4,8 @@ import com.oniesoft.model.Branch;
 import com.oniesoft.model.Register;
 import com.oniesoft.service.AdminViewService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,12 +14,17 @@ import java.util.List;
 public class AdminViewController {
     @Autowired
     private AdminViewService adminViewService;
-    @GetMapping("/branchsbycmpid/{cmpId}")
-    public List<Branch> findBranchsByCmpId(@PathVariable int cmpId){
-        return adminViewService.findBranchByCmpId(cmpId);
+    @GetMapping("/branchsbycmpid")
+    public Page<Branch> findBranchsByCmpId(@RequestParam int cmpId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return adminViewService.findBranchByCmpId(cmpId,page,size);
     }
-    @GetMapping("/registersbybranchId/{branchId}")
-    public List<Register> findRegistersByBranchId(@PathVariable int branchId){
-        return adminViewService.findRegisterByBranchId(branchId);
+
+        @GetMapping("/registersbybranchId")
+    public Page<Register> findRegistersByBranchId(@RequestParam int branchId,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return adminViewService.findRegisterByBranchId(branchId,page,size);
+    }
+    @GetMapping("/searchbranch")
+    public List<Branch> searchBranch(@RequestParam String query){
+        return adminViewService.searchBranch(query);
     }
 }

@@ -8,6 +8,9 @@ import com.oniesoft.model.TestRunAndCase;
 import com.oniesoft.repository.TestRunAndCaseRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -89,8 +92,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
 	@Override
-	public List<TestCase> getAllTestCasesForProject(long projectID) {
-		
-		return testCaseRepository.findByProject_Id(projectID);
-	}
+    public Page<TestCase> getAllTestCasesForProject(long projectId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return testCaseRepository.findByProject_Id(projectId, pageable);
+    }
+    @Override
+    public List<TestCase> searchTestCases(String query){
+        return testCaseRepository.searchTestCaseDetails(query);
+    }
+
 }

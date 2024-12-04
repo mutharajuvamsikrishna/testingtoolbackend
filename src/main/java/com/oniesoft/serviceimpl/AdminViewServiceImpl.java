@@ -8,6 +8,9 @@ import com.oniesoft.repository.ProjectRepository;
 import com.oniesoft.repository.RegisterRepo;
 import com.oniesoft.service.AdminViewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,11 +26,18 @@ public class AdminViewServiceImpl implements AdminViewService {
     @Autowired
     private ProjectRepository projectRepository;
     @Override
-public List<Branch> findBranchByCmpId(int id){
-  return branchRepo.findByCmpId(id);
+public Page<Branch> findBranchByCmpId(int id, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+  return branchRepo.findByCmpId(id,pageable);
 }
 @Override
-    public List<Register> findRegisterByBranchId(int id){
-        return registerRepo.findByBranchId(id);
+public List<Branch> searchBranch(String query){
+        return branchRepo.searchBranchDetails(query);
+}
+
+@Override
+    public Page<Register> findRegisterByBranchId(int id, int page, int size){
+    Pageable pageable = PageRequest.of(page, size);
+        return registerRepo.findByBranchId(id,pageable);
     }
 }

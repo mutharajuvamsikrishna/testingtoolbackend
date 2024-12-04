@@ -3,6 +3,8 @@ package com.oniesoft.service;
 import java.util.List;
 
 import com.oniesoft.model.Project;
+import org.springframework.data.domain.Page;
+
 
 public interface ProjectService {
  
@@ -13,5 +15,11 @@ public interface ProjectService {
 	List<Project> getProjectsByBranchId(int branchId);
 
 	public List<Project> getAllProjects();
-	public void deleteProject(long id);
+
+
+//public Page<Project> getAllPageProject(int page, int size);
+//
+//	List<Project> searchProject(String query);
+
+    public void deleteProject(long id);
 }

@@ -3,16 +3,10 @@ package com.oniesoft.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.oniesoft.model.TestCase;
 import com.oniesoft.serviceimpl.TestCaseServiceImpl;
@@ -47,12 +41,18 @@ public class TestCaseController {
         TestCase testCase = testCaseService.getTestCaseById(id);
         return ResponseEntity.ok(testCase);
     }
-    @GetMapping("/getForProject/{id}")
-    public ResponseEntity<List<TestCase>> getTestCaseForProject(@PathVariable Long id) {
-        List<TestCase> testCase = testCaseService.getAllTestCasesForProject(id);
-        return ResponseEntity.ok(testCase);
+    @GetMapping("/getForProject")
+    public ResponseEntity<Page<TestCase>> getTestCaseForProject(
+            @RequestParam Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<TestCase> testCases = testCaseService.getAllTestCasesForProject(id, page, size);
+        return ResponseEntity.ok(testCases);
     }
-
+@GetMapping("/searchtestcase")
+public List<TestCase> searchTestCase(@RequestParam String query){
+        return testCaseService.searchTestCases(query);
+}
     @GetMapping("/getAll")
     public ResponseEntity<List<TestCase>> getAllTestCases() {
         List<TestCase> testCases = testCaseService.getAllTestCases();

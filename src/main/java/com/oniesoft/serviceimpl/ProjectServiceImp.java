@@ -5,6 +5,9 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.oniesoft.exception.ResourceNotFoundException;
@@ -94,7 +97,18 @@ public class ProjectServiceImp implements ProjectService {
 
         return projectRepository.findAll();
     }
-
+//    @Override
+//    public Page<Project> getAllPageProject(int page, int size) {
+//        // Create a Pageable object with a dynamic page number and page size
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        // Fetch paginated departments
+//        return projectRepository.findAll(pageable);
+//    }
+//@Override
+//public List<Project> searchProject(String query){
+//        return projectRepository.searchProjectDetails(query);
+//}
     @Override
     public void deleteProject(long id) {
 
