@@ -5,11 +5,15 @@ import com.oniesoft.model.*;
 
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -41,9 +45,9 @@ public class TestRunController {
     public List<TestRun> getTestRunByProjectId(@RequestParam Long projectId){
         return testRunService.getTestRunById(projectId);
 }
-    @GetMapping("/testcases/{testRunId}")
-    public List<TestRunAndCase> getTestCasesByTestRunId(@PathVariable int testRunId) {
-        return testRunService.getTestCasesByTestRunId(testRunId);
+    @GetMapping("/testcases")
+    public Page<TestRunAndCase> getTestCasesByTestRunId(@RequestParam int testRunId, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+        return testRunService.getPageTestCasesByTestRunId(testRunId,page,size);
     }
 
     @GetMapping("/edittestrun")

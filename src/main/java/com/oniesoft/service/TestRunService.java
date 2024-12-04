@@ -3,6 +3,7 @@ package com.oniesoft.service;
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.model.*;
+import org.springframework.data.domain.Page;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -50,7 +51,10 @@ public interface TestRunService {
 
     List<TestRunAndCase> getTestCasesByTestRunId(int testRunId);
 
-    List<TestCase> getAllUnMappedTestCases(int testRunId,long projectid);
+    Page<TestRunAndCase> getPageTestCasesByTestRunId(int testRunId, int page, int size);
+
+    List<TestCase> getAllUnMappedTestCases(int testRunId, long projectid);
+
 
 
     String integrateTestCasesWithTestingTool(int testRunId) throws Exception;

@@ -12,6 +12,10 @@ import com.oniesoft.repository.*;
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -132,6 +136,11 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
     public List<TestRunAndCase> getTestCasesByTestRunId(int testRunId) {
         return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
     }
+    @Override
+    public Page<TestRunAndCase> getPageTestCasesByTestRunId(int testRunId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId,pageable);
+    }
 
     @Override
     public List<TestCase> getAllUnMappedTestCases(int testRunId,long projectId) {
@@ -149,7 +158,6 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
         // Return the filtered list
         return unMappedTestCases;
     }
-
 
 
     @Override
