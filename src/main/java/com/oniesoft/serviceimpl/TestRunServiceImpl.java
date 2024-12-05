@@ -128,9 +128,9 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
     return ele;
 }
     @Override
-    public List<TestRun> getTestRunById(Long projectId){
-
-        return testRunRepo.findByProjectId(projectId);
+    public Page<TestRun> getTestRunById(Long projectId,int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return testRunRepo.findByProjectId(projectId,pageable);
     }
     @Override
     public List<TestRunAndCase> getTestCasesByTestRunId(int testRunId) {
@@ -282,12 +282,12 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
 
     @Override
     public List<TestRunAndTestCase> cloneTestRun(int id, Long projectId) {
-        TestRun testRunOld = this.getTestRunById(projectId).stream().filter(run -> run.getId() == id).toList().get(0);
+        Optional<TestRun> testRunOld =testRunRepo.findById(id);
         List<TestRunAndCase> testCasesByTestRunId = this.getTestCasesByTestRunId(id);
         TestRun testRunNew =new TestRun();
-        testRunNew.setTestRunName(testRunOld.getTestRunName() + " - Clone");
-        testRunNew.setCreatedBy(testRunOld.getCreatedBy());
-        testRunNew.setProjectId(testRunOld.getProjectId());
+        testRunNew.setTestRunName(testRunOld.get().getTestRunName() + " - Clone");
+        testRunNew.setCreatedBy(testRunOld.get().getCreatedBy());
+        testRunNew.setProjectId(testRunOld.get().getProjectId());
         TestRun testRun = this.createTestRun(testRunNew);
         List<String> caseIds = testCasesByTestRunId.stream().map(TestRunAndCase::getAutomationId).toList();
         TestRunRequest testRunRequest = new TestRunRequest();

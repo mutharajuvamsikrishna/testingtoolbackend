@@ -47,7 +47,7 @@ public interface TestRunService {
     //    }
     List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest);
 
-    List<TestRun> getTestRunById(Long projectId);
+    Page<TestRun> getTestRunById(Long projectIdnt, int page, int size);
 
     List<TestRunAndCase> getTestCasesByTestRunId(int testRunId);
 
