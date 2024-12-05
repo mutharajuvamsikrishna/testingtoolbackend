@@ -49,7 +49,10 @@ public class TestRunController {
     public Page<TestRunAndCase> getTestCasesByTestRunId(@RequestParam int testRunId, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         return testRunService.getPageTestCasesByTestRunId(testRunId,page,size);
     }
-
+    @GetMapping("/listoftestcases")
+    public List<TestRunAndCase> getListOfTestCasesByTestRunId(@RequestParam int testRunId) {
+        return testRunService.getTestCasesByTestRunId(testRunId);
+    }
     @GetMapping("/edittestrun")
     public List<TestCase> getAllUnMappedTestCases(@RequestParam int testRunId,@RequestParam long projectId) {
         return testRunService.getAllUnMappedTestCases(testRunId,projectId);

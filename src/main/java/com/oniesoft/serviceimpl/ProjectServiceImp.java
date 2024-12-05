@@ -26,27 +26,9 @@ public class ProjectServiceImp implements ProjectService {
         project.setCreatedAt(LocalDateTime.now());
         project.setUpdatedAt(LocalDateTime.now());
         project.setBasicAuth(false);
-        project.setHeadLess(false);
-
-        project.setTraceView(true);
-
-        project.setEnableRecording(true);
-
-        project.setShortWait(0);
-
-        project.setCustomWait(0);
-
-        project.setRetryCount(0);
-        int retryCount;
-
         // REPORT CONFIGURATIONS
-
         project.setEnableLiveReporting(true);
-
-
-        project.setOverrideReport(false);
         boolean overrideReport;
-
         // TEAMS NOTIFICATION
 
         project.setNotifyTeams(false);
@@ -62,10 +44,7 @@ public class ProjectServiceImp implements ProjectService {
 
         project.setSendEmailReport(false);
 
-
         // JIRA CONFIGURATIONS
-
-        project.setCreateJiraIssues(false);
 
         return projectRepository.save(project);
 
