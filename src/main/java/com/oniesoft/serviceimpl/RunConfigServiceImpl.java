@@ -15,15 +15,7 @@ import java.util.Optional;
 public class RunConfigServiceImpl implements RunConfigService {
     @Autowired
     private RunConfigRepo runConfigRepo;
-    @Override
-    public RunConfig addRunConfig(RunConfig runConfig) throws Exception {
-        Optional<RunConfig> runConfig1=runConfigRepo.findByTestRunId(runConfig.getTestRunId());
-        if(runConfig1.isEmpty()){
-         return  runConfigRepo.save(runConfig);
-        }else {
-            throw new Exception("RunConfig Already Exist for "+runConfig.getTestRunId());
-        }
-    }
+
     @Override
     public RunConfig updateRunConfig(RunConfig runConfig) throws Exception {
      Optional<RunConfig> runConfig1=runConfigRepo.findById(runConfig.getId());
@@ -41,6 +33,10 @@ public class RunConfigServiceImpl implements RunConfigService {
     @Override
     public RunConfig getRunConfig(int id){
         return runConfigRepo.findById(id).get();
+    }
+    @Override
+    public RunConfig getRunConfigByTestRunId(int testRunId){
+        return runConfigRepo.findByTestRunId(testRunId);
     }
     @Override
     public String deleteRunConfig(int id){

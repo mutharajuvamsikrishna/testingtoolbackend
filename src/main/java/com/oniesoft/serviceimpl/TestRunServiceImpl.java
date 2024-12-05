@@ -39,21 +39,38 @@ public class TestRunServiceImpl implements TestRunService {
     @Autowired
     TestRunAndCaseRepo testRunAndCaseRepo;
     @Autowired
-   private TestResultsRepo testResultsRepo;
-@Autowired
-private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
-@Autowired
-private UserConfigRepo userConfigRepo;
-
+    private TestResultsRepo testResultsRepo;
+    @Autowired
+    private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
+    @Autowired
+    private UserConfigRepo userConfigRepo;
+    @Autowired
+    private RunConfigRepo runConfigRepo;
 
     @Override
-    public TestRun createTestRun(TestRun testRun){
+    public TestRun createTestRun(TestRun testRun) {
         testRun.setCreatedAt(LocalDateTime.now());
         testRun.setUpdatedAt(LocalDateTime.now());
+        TestRun testRun1 = testRunRepo.save(testRun);
+        RunConfig runConfig = new RunConfig();
+        runConfig.setTestRunId(testRun1.getId());
+        runConfig.setBrowser("chrome");
+        runConfig.setHeadLess(false);
+        runConfig.setTraceView(false);
+        runConfig.setEnableRecording(false);
 
-        return testRunRepo.save(testRun);
+        runConfig.setTestType("none");
+        runConfig.setShortWait(15);
+        runConfig.setCustomWait(30);
+        runConfig.setRetryCount(0);
+        runConfig.setOverrideReport(false);
+// JIRA bug reporting
+        runConfig.setCreateJiraIssues(true);
+        runConfigRepo.save(runConfig);
+        return testRun1;
     }
-//    @Override
+
+    //    @Override
 //    public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
 //        // Fetch the existing TestRun by ID
 //        TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId())
@@ -83,67 +100,68 @@ private UserConfigRepo userConfigRepo;
 //
 //        return ele;
 //    }
-@Override
-public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
-    // Fetch the existing TestRun by ID
-    TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId())
-            .orElseThrow(() -> new ResourceNotFoundException("TestRun not found with ID: " + testRunRequest.getTestRunId()));
-
-    // Fetch test case of the run
-    List<TestRunAndCase> testCasesByTestRunId = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunRequest.getTestRunId());
-
-    // Delete all test cases in that run and their links
-    testCasesByTestRunId.forEach(testRunAndCase -> testRunAndTestCaseRepo.deleteTestRunAndTestCaseById(testRunAndCase.getId()));
-    testRunAndCaseRepo.deleteAllById(testCasesByTestRunId.stream().map(TestRunAndCase::getId).toList());
-
-
-
-    List<TestRunAndTestCase> ele = new ArrayList<>();
-
-    List<Long> testCaseIDs = testRunRequest.getTestCaseId().stream().map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
-
-    // Link each TestCase to the existing TestRun
-    for (Long testCaseId : testCaseIDs) {
-        TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
-        ;
-
-        TestRunAndCase testRunAndCase = new TestRunAndCase();
-        testRunAndCase.setTestCaseName(testCase.getTestCaseName());
-        testRunAndCase.setAutomationId(testCase.getAutomationId());
-        testRunAndCase.setStatus("New");
-        testRunAndCase.setAuthor(testCase.getAuthor());
-        testRunAndCase.setAutomationId(testCase.getAutomationId());
-        testRunAndCase.setTestCaseId(testCase.getId());
-        testRunAndCase.setFeature(testCase.getFeature());
-        testRunAndCase.setCreatedAt(LocalDateTime.now());
-        testRunAndCase.setUpdatedAt(LocalDateTime.now());
-        TestRunAndCase testRunAndCase1 = testRunAndCaseRepo.save(testRunAndCase);
-        TestRunAndTestCase link = new TestRunAndTestCase();
-        link.setTestRun(testRun);
-        link.setTestCase(testRunAndCase1);
-        ele.add(link);
-        testRunAndTestCaseRepo.save(link);
-    }
-
-    return ele;
-}
     @Override
-    public Page<TestRun> getTestRunById(Long projectId,int page, int size){
-        Pageable pageable = PageRequest.of(page, size);
-        return testRunRepo.findByProjectId(projectId,pageable);
+    public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
+        // Fetch the existing TestRun by ID
+        TestRun testRun = testRunRepo.findById(testRunRequest.getTestRunId()).orElseThrow(() -> new ResourceNotFoundException("TestRun not found with ID: " + testRunRequest.getTestRunId()));
+
+        // Fetch test case of the run
+        List<TestRunAndCase> testCasesByTestRunId = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunRequest.getTestRunId());
+
+        // Delete all test cases in that run and their links
+        testCasesByTestRunId.forEach(testRunAndCase -> testRunAndTestCaseRepo.deleteTestRunAndTestCaseById(testRunAndCase.getId()));
+        testRunAndCaseRepo.deleteAllById(testCasesByTestRunId.stream().map(TestRunAndCase::getId).toList());
+
+
+        List<TestRunAndTestCase> ele = new ArrayList<>();
+
+        List<Long> testCaseIDs = testRunRequest.getTestCaseId().stream().map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
+
+        // Link each TestCase to the existing TestRun
+        for (Long testCaseId : testCaseIDs) {
+            TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
+            ;
+
+            TestRunAndCase testRunAndCase = new TestRunAndCase();
+            testRunAndCase.setTestCaseName(testCase.getTestCaseName());
+            testRunAndCase.setAutomationId(testCase.getAutomationId());
+            testRunAndCase.setStatus("New");
+            testRunAndCase.setAuthor(testCase.getAuthor());
+            testRunAndCase.setAutomationId(testCase.getAutomationId());
+            testRunAndCase.setTestCaseId(testCase.getId());
+            testRunAndCase.setFeature(testCase.getFeature());
+            testRunAndCase.setCreatedAt(LocalDateTime.now());
+            testRunAndCase.setUpdatedAt(LocalDateTime.now());
+            TestRunAndCase testRunAndCase1 = testRunAndCaseRepo.save(testRunAndCase);
+            TestRunAndTestCase link = new TestRunAndTestCase();
+            link.setTestRun(testRun);
+            link.setTestCase(testRunAndCase1);
+            ele.add(link);
+            testRunAndTestCaseRepo.save(link);
+        }
+
+        return ele;
     }
+
+    @Override
+    public Page<TestRun> getTestRunById(Long projectId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return testRunRepo.findByProjectId(projectId, pageable);
+    }
+
     @Override
     public List<TestRunAndCase> getTestCasesByTestRunId(int testRunId) {
         return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
     }
+
     @Override
     public Page<TestRunAndCase> getPageTestCasesByTestRunId(int testRunId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId,pageable);
+        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId, pageable);
     }
 
     @Override
-    public List<TestCase> getAllUnMappedTestCases(int testRunId,long projectId) {
+    public List<TestCase> getAllUnMappedTestCases(int testRunId, long projectId) {
         // Get all TestCase IDs that are associated with the given testRunId
         List<String> testCaseIds = testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRunId);
 
@@ -151,9 +169,7 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
         List<TestCase> testCases = testCaseRepository.findByProject_Id(projectId);
 
         // Filter the TestCase list to exclude those already associated with the testRunId
-        List<TestCase> unMappedTestCases = testCases.stream()
-                .filter(testCase -> !testCaseIds.contains(testCase.getAutomationId()))
-                .collect(Collectors.toList());
+        List<TestCase> unMappedTestCases = testCases.stream().filter(testCase -> !testCaseIds.contains(testCase.getAutomationId())).collect(Collectors.toList());
 
         // Return the filtered list
         return unMappedTestCases;
@@ -180,12 +196,10 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
         }
 
         // Step 3: Prepare Automation IDs (testCaseIds)
-        String automationIds = testRunAndCases.stream()
-                .map(testCase -> String.valueOf(testCase.getAutomationId()))
-                .collect(Collectors.joining(","));
+        String automationIds = testRunAndCases.stream().map(testCase -> String.valueOf(testCase.getAutomationId())).collect(Collectors.joining(","));
 
         // Step 4: Fetch Project Details
-       Optional<UserConfig> userConfig = userConfigRepo.findByProjectId(testRun.getProjectId());
+        Optional<UserConfig> userConfig = userConfigRepo.findByProjectId(testRun.getProjectId());
         if (userConfig.isEmpty() || userConfig.get().getProjectPath() == null) {
             throw new Exception("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
@@ -193,11 +207,11 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
         if (userConfig.get().getIpAddress() == null) {
             throw new Exception("Project IpAddress Not Found for project ID: " + testRun.getProjectId());
         }
-  String ipAddress=userConfig.get().getIpAddress();
+        String ipAddress = userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
-        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath,ipAddress,testRun.getProjectId());
+        String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath, ipAddress, testRun.getProjectId());
 
-        return "Test cases integration "  + ". Service response: " + serviceResponse;
+        return "Test cases integration " + ". Service response: " + serviceResponse;
     }
 
     private String sendPayloadToWindowsService(int testRunId, String automationIds, String projectPath, String ipAddress, Long projectId) {
@@ -219,10 +233,7 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
 
             // Send the payload using an HTTP client
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(windowsServiceUrl))
-                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(payload)))
-                    .build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(windowsServiceUrl)).POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(payload))).build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -242,15 +253,14 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
         if (testRunOpt.isPresent()) {
             TestRun testRun = testRunOpt.get();
 
-            TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(
-                    testResultDto.getTestRunId(), testResultDto.getAutomationId());
+            TestRunAndCase existingTestRunAndCase = testRunAndTestCaseRepo.findTestCaseByTestRunIdAndAutomationId(testResultDto.getTestRunId(), testResultDto.getAutomationId());
 
             if (existingTestRunAndCase != null) {
                 existingTestRunAndCase.setStatus(testResultDto.getStatus());
                 existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
 
-                TestCase testCase=testCaseRepository.findByProjectIdAndAutomationId(testRunOpt.get().getProjectId(), updatedTestRunAndCase.getAutomationId());
+                TestCase testCase = testCaseRepository.findByProjectIdAndAutomationId(testRunOpt.get().getProjectId(), updatedTestRunAndCase.getAutomationId());
                 testCase.setUpdatedAt(updatedTestRunAndCase.getUpdatedAt());
                 TestResults testResults = new TestResults();
                 testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
@@ -266,13 +276,11 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
                 testRunAndTestResults.setTestResults(savedTestResults);
                 testRunAndTestResults.setTestRun(testRun);
                 testRunAndTestResultsRepo.save(testRunAndTestResults);
-                String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() +
-                        " status updated to " + updatedTestRunAndCase.getStatus();
+                String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() + " status updated to " + updatedTestRunAndCase.getStatus();
 //                webSocketHelper.broadcast(updateMessage);
                 return updatedTestRunAndCase;
             } else {
-                throw new Exception("TestRunAndCase not found for TestRunId: " + testResultDto.getTestRunId() +
-                        " and AutomationId: " + testResultDto.getAutomationId());
+                throw new Exception("TestRunAndCase not found for TestRunId: " + testResultDto.getTestRunId() + " and AutomationId: " + testResultDto.getAutomationId());
             }
         } else {
             throw new Exception("TestRun not found for TestRunId: " + testResultDto.getTestRunId());
@@ -282,9 +290,9 @@ public List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest) {
 
     @Override
     public List<TestRunAndTestCase> cloneTestRun(int id, Long projectId) {
-        Optional<TestRun> testRunOld =testRunRepo.findById(id);
+        Optional<TestRun> testRunOld = testRunRepo.findById(id);
         List<TestRunAndCase> testCasesByTestRunId = this.getTestCasesByTestRunId(id);
-        TestRun testRunNew =new TestRun();
+        TestRun testRunNew = new TestRun();
         testRunNew.setTestRunName(testRunOld.get().getTestRunName() + " - Clone");
         testRunNew.setCreatedBy(testRunOld.get().getCreatedBy());
         testRunNew.setProjectId(testRunOld.get().getProjectId());

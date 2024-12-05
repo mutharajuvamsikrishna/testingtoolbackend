@@ -17,9 +17,9 @@ public class RunConfig {
     private boolean enableRecording;
     //            testType = api or web or mobile or all (default). all will run all type of tests
     private String testType;
-    private int normalWait;
+
     private int shortWait;
-    private int longWait;
+
     //customWait is used to override normalWait and longWait in any waiting scenario
     private int customWait;
     //            retryCount will retry given number of times for failed tests default value is 0
@@ -29,7 +29,8 @@ public class RunConfig {
     //            JIRA CONFIGURATIONS
 // JIRA bug reporting
     private boolean createJiraIssues;
-    public RunConfig(){
+
+    public RunConfig() {
 
     }
 
@@ -89,28 +90,12 @@ public class RunConfig {
         this.testType = testType;
     }
 
-    public int getNormalWait() {
-        return normalWait;
-    }
-
-    public void setNormalWait(int normalWait) {
-        this.normalWait = normalWait;
-    }
-
     public int getShortWait() {
         return shortWait;
     }
 
     public void setShortWait(int shortWait) {
         this.shortWait = shortWait;
-    }
-
-    public int getLongWait() {
-        return longWait;
-    }
-
-    public void setLongWait(int longWait) {
-        this.longWait = longWait;
     }
 
     public int getCustomWait() {
@@ -155,9 +140,7 @@ public class RunConfig {
                 ", traceView=" + traceView +
                 ", enableRecording=" + enableRecording +
                 ", testType='" + testType + '\'' +
-                ", normalWait=" + normalWait +
                 ", shortWait=" + shortWait +
-                ", longWait=" + longWait +
                 ", customWait=" + customWait +
                 ", retryCount=" + retryCount +
                 ", overrideReport=" + overrideReport +
@@ -165,3 +148,4 @@ public class RunConfig {
                 '}';
     }
 }
+

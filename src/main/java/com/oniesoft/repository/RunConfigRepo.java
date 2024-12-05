@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface RunConfigRepo extends JpaRepository<RunConfig,Integer> {
 
-    Optional<RunConfig> findByTestRunId(int testRunId);
+
+    RunConfig findByTestRunId(int id);
 }
