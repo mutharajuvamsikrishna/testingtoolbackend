@@ -20,7 +20,7 @@ public class TestCaseController {
 
     @PostMapping("/save/{projectId}")
     public ResponseEntity<?> saveTestCase(@RequestBody TestCase testCase, @PathVariable long projectId) {
-        TestCase savedTestCase = null;
+        TestCase savedTestCase;
         try {
             savedTestCase = testCaseService.createTestCase(testCase, projectId);
             return ResponseEntity.ok(savedTestCase);

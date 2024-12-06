@@ -2,28 +2,22 @@ package com.oniesoft.serviceimpl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 import com.oniesoft.dto.*;
 import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.*;
 import com.oniesoft.repository.*;
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

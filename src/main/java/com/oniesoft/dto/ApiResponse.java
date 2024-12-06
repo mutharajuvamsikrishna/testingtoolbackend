@@ -1,7 +1,5 @@
 package com.oniesoft.dto;
 
-import java.util.List;
-
 public class ApiResponse<T> {
     private T data;
     private PaginationMetadata pagination;
