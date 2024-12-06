@@ -1,4 +1,6 @@
 package com.oniesoft.controller;
+import com.oniesoft.dto.ApiResponse;
+import com.oniesoft.dto.EditTestRunTestCasesDTO;
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
 import com.oniesoft.model.*;
@@ -6,6 +8,8 @@ import com.oniesoft.model.*;
 import com.oniesoft.service.TestRunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,10 +53,14 @@ public class TestRunController {
     public List<TestRunAndCase> getListOfTestCasesByTestRunId(@RequestParam int testRunId) {
         return testRunService.getTestCasesByTestRunId(testRunId);
     }
-    @GetMapping("/edittestrun")
-    public List<TestCase> getAllUnMappedTestCases(@RequestParam int testRunId,@RequestParam long projectId) {
-        return testRunService.getAllUnMappedTestCases(testRunId,projectId);
+    @GetMapping("/edittestrun/{testRunId}/{projectId}")
+    public ResponseEntity<ApiResponse<EditTestRunTestCasesDTO>> getAllUnMappedTestCases(@PathVariable int testRunId, @PathVariable long projectId, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, size);
+        EditTestRunTestCasesDTO editTestRunTestCasesDTO = testRunService.getAllUnMappedTestCases(testRunId, projectId, pageable);
+        ApiResponse<EditTestRunTestCasesDTO> response = ApiResponse.success(editTestRunTestCasesDTO, editTestRunTestCasesDTO.getPagination());
+        return ResponseEntity.ok(response);
     }
+
     @PostMapping("/run/{testRunId}")
     public ResponseEntity<String> runTestCases(@PathVariable int testRunId) {
         try {

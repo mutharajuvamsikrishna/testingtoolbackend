@@ -4,8 +4,7 @@ package com.oniesoft.serviceimpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-import com.oniesoft.dto.TestResultDto;
-import com.oniesoft.dto.TestRunRequest;
+import com.oniesoft.dto.*;
 import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.*;
 import com.oniesoft.repository.*;
@@ -120,8 +119,6 @@ public class TestRunServiceImpl implements TestRunService {
         // Link each TestCase to the existing TestRun
         for (Long testCaseId : testCaseIDs) {
             TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
-            ;
-
             TestRunAndCase testRunAndCase = new TestRunAndCase();
             testRunAndCase.setTestCaseName(testCase.getTestCaseName());
             testRunAndCase.setAutomationId(testCase.getAutomationId());
@@ -161,18 +158,29 @@ public class TestRunServiceImpl implements TestRunService {
     }
 
     @Override
-    public List<TestCase> getAllUnMappedTestCases(int testRunId, long projectId) {
+    public EditTestRunTestCasesDTO getAllUnMappedTestCases(int testRunId, long projectId, Pageable pageable) {
         // Get all TestCase IDs that are associated with the given testRunId
         List<String> testCaseIds = testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRunId);
 
         // Get all TestCase entities from the repository
-        List<TestCase> testCases = testCaseRepository.findByProject_Id(projectId);
+        Page<TestCase> testCases = testCaseRepository.findByProject_Id(projectId, pageable);
 
-        // Filter the TestCase list to exclude those already associated with the testRunId
-        List<TestCase> unMappedTestCases = testCases.stream().filter(testCase -> !testCaseIds.contains(testCase.getAutomationId())).collect(Collectors.toList());
+        // Filter test cases with in a page of test run
+        List<String> caseIdsInRun = testCases.getContent().stream().map(TestCase::getAutomationId).filter(testCaseIds::contains).toList();
 
-        // Return the filtered list
-        return unMappedTestCases;
+        // Get Test cases in a page
+        List<TestCaseDTO> casesInProject = testCases.getContent().stream().map(testCase ->
+            new TestCaseDTO(testCase.getId(), testCase.getTestCaseName(), testCase.getAuthor(), testCase.getAutomationId(), testCase.getFeature(), testCase.getProject())
+        ).toList();
+        // Set pagination metadata
+        ApiResponse.PaginationMetadata pagination = new ApiResponse.PaginationMetadata(
+                testCases.getNumber(),
+                testCases.getTotalPages(),
+                testCases.getTotalElements(),
+                testCases.getSize()
+        );
+        // Return combine data of test cases in a project and test case (automation ids) added to a test run in that page
+        return new EditTestRunTestCasesDTO(casesInProject, caseIdsInRun, pagination);
     }
 
 

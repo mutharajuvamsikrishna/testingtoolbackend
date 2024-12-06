@@ -25,13 +25,13 @@ public class TestCaseController {
             savedTestCase = testCaseService.createTestCase(testCase, projectId);
             return ResponseEntity.ok(savedTestCase);
         } catch (Exception e) {
-          return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
     }
 
     @PutMapping("/update")
-    public ResponseEntity<TestCase> updateTestCase( @RequestBody TestCase testCase) {
+    public ResponseEntity<TestCase> updateTestCase(@RequestBody TestCase testCase) {
         TestCase updatedTestCase = testCaseService.updateTestCase(testCase);
         return ResponseEntity.ok(updatedTestCase);
     }
@@ -41,6 +41,7 @@ public class TestCaseController {
         TestCase testCase = testCaseService.getTestCaseById(id);
         return ResponseEntity.ok(testCase);
     }
+
     @GetMapping("/getForProject")
     public ResponseEntity<Page<TestCase>> getTestCaseForProject(
             @RequestParam Long id,
@@ -49,10 +50,12 @@ public class TestCaseController {
         Page<TestCase> testCases = testCaseService.getAllTestCasesForProject(id, page, size);
         return ResponseEntity.ok(testCases);
     }
-@GetMapping("/searchtestcase")
-public List<TestCase> searchTestCase(@RequestParam String query){
+
+    @GetMapping("/searchtestcase")
+    public List<TestCase> searchTestCase(@RequestParam String query) {
         return testCaseService.searchTestCases(query);
-}
+    }
+
     @GetMapping("/getAll")
     public ResponseEntity<List<TestCase>> getAllTestCases() {
         List<TestCase> testCases = testCaseService.getAllTestCases();
