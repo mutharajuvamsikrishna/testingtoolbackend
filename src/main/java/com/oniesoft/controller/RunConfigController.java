@@ -1,5 +1,6 @@
 package com.oniesoft.controller;
 
+import com.oniesoft.dto.ConfigurationDto;
 import com.oniesoft.model.RunConfig;
 import com.oniesoft.service.RunConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,15 @@ public class RunConfigController {
         try {
             RunConfig runConfig = runConfigService.getRunConfigByTestRunId(testRunId);
             return ResponseEntity.ok(runConfig);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+    @GetMapping("/getconfigbytestrunid/{testRunId}")
+    public ResponseEntity<?> getConfigByTestRunId(@PathVariable int testRunId) {
+        try {
+            ConfigurationDto configurationDto = runConfigService.getConfiguration(testRunId);
+            return ResponseEntity.ok(configurationDto);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

@@ -44,7 +44,7 @@ public class LoginController {
             final String jwt = jwtService.generateToken(authRequest.getEmpEmail());
 
             // Create an instance of AuthenticationResponse and return it in the ResponseEntity
-            AuthenticationResponse response = new AuthenticationResponse(jwt, userRole);
+            AuthenticationResponse response = new AuthenticationResponse(jwt, userRole.getEmpName(),userRole.getEmpEmail(),userRole.getEmpMob(),userRole.getEmpRole(),userRole.getEmpDepartment(),userRole.isStatus(),userRole.getBranchId());
             return ResponseEntity.ok(response);
 
         } else {

@@ -1,7 +1,13 @@
 package com.oniesoft.serviceimpl;
 
+import com.oniesoft.dto.ConfigurationDto;
+import com.oniesoft.exception.ResourceNotFoundException;
+import com.oniesoft.model.Project;
 import com.oniesoft.model.RunConfig;
+import com.oniesoft.model.TestRun;
+import com.oniesoft.repository.ProjectRepository;
 import com.oniesoft.repository.RunConfigRepo;
+import com.oniesoft.repository.TestRunRepo;
 import com.oniesoft.service.RunConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +21,10 @@ import java.util.Optional;
 public class RunConfigServiceImpl implements RunConfigService {
     @Autowired
     private RunConfigRepo runConfigRepo;
+    @Autowired
+    private TestRunRepo testRunRepo;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Override
     public RunConfig updateRunConfig(RunConfig runConfig) throws Exception {
@@ -43,4 +53,55 @@ public class RunConfigServiceImpl implements RunConfigService {
         runConfigRepo.deleteById(id);
         return "deleted SuccessFully";
     }
+    @Override
+    public ConfigurationDto getConfiguration(int testRunId) throws ResourceNotFoundException {
+        // Fetch TestRun
+        TestRun testRun = testRunRepo.findById(testRunId)
+                .orElseThrow(() -> new ResourceNotFoundException("TestRun Id " + testRunId + " not found"));
+
+        // Fetch Project
+        Project project = projectRepository.findById(testRun.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project Id " + testRun.getProjectId() + " not found"));
+
+        // Fetch RunConfig
+        RunConfig runConfig = runConfigRepo.findByTestRunId(testRunId);
+        if (runConfig == null) {
+            throw new ResourceNotFoundException("RunConfig for TestRun Id " + testRunId + " not found");
+        }
+
+        // Construct and return ConfigurationDto
+        return buildConfigurationDto(project, runConfig);
+    }
+
+    private ConfigurationDto buildConfigurationDto(Project project, RunConfig runConfig) {
+        return new ConfigurationDto(
+                project.getUrl(),
+                project.isBasicAuth(),
+                project.getBasicAuthUser(),
+                project.getBasicAuthPassword(),
+                project.isEnableLiveReporting(),
+                project.getElasticSearchURL(),
+                project.isNotifyTeams(),
+                project.getNotifyBlockerCount(),
+                project.getNotifyCriticalCount(),
+                project.getNotifyMajorCount(),
+                project.isSendEmailReport(),
+                project.getEmailReportTo(),
+                project.getJiraUserName(),
+                project.getJiraPassword(),
+                project.getJiraURL(),
+                project.getJiraProjectKey(),
+                runConfig.getBrowser(),
+                runConfig.isHeadLess(),
+                runConfig.isTraceView(),
+                runConfig.isEnableRecording(),
+                runConfig.getTestType(),
+                runConfig.getShortWait(),
+                runConfig.getCustomWait(),
+                runConfig.getRetryCount(),
+                runConfig.isOverrideReport(),
+                runConfig.isCreateJiraIssues()
+        );
+    }
+
 }
