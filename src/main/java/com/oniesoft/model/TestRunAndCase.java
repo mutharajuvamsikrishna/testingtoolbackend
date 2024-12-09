@@ -18,7 +18,7 @@ public class TestRunAndCase {
         private String feature;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-
+         private String excuteTime;
 public TestRunAndCase(){
 
 }
@@ -95,19 +95,12 @@ public TestRunAndCase(){
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public String toString() {
-        return "TestRunAndCase{" +
-                "id=" + id +
-                ", testCaseName='" + testCaseName + '\'' +
-                ", status='" + status + '\'' +
-                ", author='" + author + '\'' +
-                ", automationId='" + automationId + '\'' +
-                ", testCaseId=" + testCaseId +
-                ", feature='" + feature + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+    public String getExcuteTime() {
+        return excuteTime;
+    }
+
+    public void setExcuteTime(String excuteTime) {
+        this.excuteTime = excuteTime;
     }
 
 }

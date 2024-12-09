@@ -94,7 +94,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 	@Override
     public Page<TestCase> getAllTestCasesForProject(long projectId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
         return testCaseRepository.findByProject_Id(projectId, pageable);
     }
     @Override

@@ -3,6 +3,7 @@ package com.oniesoft.service;
 import com.oniesoft.dto.EditTestRunTestCasesDTO;
 import com.oniesoft.dto.TestResultDto;
 import com.oniesoft.dto.TestRunRequest;
+import com.oniesoft.dto.TestRunTableViewDTO;
 import com.oniesoft.model.TestRun;
 import com.oniesoft.model.TestRunAndCase;
 import com.oniesoft.model.TestRunAndTestCase;
@@ -50,7 +51,7 @@ public interface TestRunService {
     //    }
     List<TestRunAndTestCase> addTestRun(TestRunRequest testRunRequest);
 
-    Page<TestRun> getTestRunById(Long projectIdnt, int page, int size);
+    Page<TestRunTableViewDTO> getTestRunById(Long projectIdnt, int page, int size);
 
     List<TestRunAndCase> getTestCasesByTestRunId(int testRunId);
 

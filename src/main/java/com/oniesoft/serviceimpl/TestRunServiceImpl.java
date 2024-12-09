@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -31,10 +32,6 @@ public class TestRunServiceImpl implements TestRunService {
     private TestCaseRepository testCaseRepository;
     @Autowired
     TestRunAndCaseRepo testRunAndCaseRepo;
-    @Autowired
-    private TestResultsRepo testResultsRepo;
-    @Autowired
-    private TestRunAndTestResultsRepo testRunAndTestResultsRepo;
     @Autowired
     private UserConfigRepo userConfigRepo;
     @Autowired
@@ -135,9 +132,10 @@ public class TestRunServiceImpl implements TestRunService {
     }
 
     @Override
-    public Page<TestRun> getTestRunById(Long projectId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return testRunRepo.findByProjectId(projectId, pageable);
+    public Page<TestRunTableViewDTO> getTestRunById(Long projectId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<TestRun> testRuns = testRunRepo.findByProjectId(projectId, pageable);
+        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRun.getId()).size(), "TO DO"));
     }
 
     @Override
@@ -260,6 +258,7 @@ public class TestRunServiceImpl implements TestRunService {
             if (existingTestRunAndCase != null) {
                 existingTestRunAndCase.setStatus(testResultDto.getStatus());
                 existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
+                existingTestRunAndCase.setExcuteTime(testResultDto.getExcuteTime());
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()
@@ -276,20 +275,6 @@ public class TestRunServiceImpl implements TestRunService {
                 testRun.setUpdatedAt(LocalDateTime.now());
                 testRunRepo.save(testRun);
 
-                TestResults testResults = new TestResults();
-                testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
-                testResults.setAuthor(updatedTestRunAndCase.getAuthor());
-                testResults.setAutomationId(updatedTestRunAndCase.getAutomationId());
-                testResults.setFeature(updatedTestRunAndCase.getFeature());
-                testResults.setCreatedAt(LocalDateTime.now());
-                testResults.setUpdatedAt(LocalDateTime.now());
-                testResults.setExcuteTime(testResultDto.getExcuteTime());
-                testResults.setStatus(testResultDto.getStatus());
-                TestResults savedTestResults = testResultsRepo.save(testResults);
-                TestRunAndTestResults testRunAndTestResults = new TestRunAndTestResults();
-                testRunAndTestResults.setTestResults(savedTestResults);
-                testRunAndTestResults.setTestRun(testRun);
-                testRunAndTestResultsRepo.save(testRunAndTestResults);
                 return updatedTestRunAndCase;
             } else {
                 throw new Exception("TestRunAndCase not found for TestRunId: " + testResultDto.getTestRunId() + " and AutomationId: " + testResultDto.getAutomationId());
