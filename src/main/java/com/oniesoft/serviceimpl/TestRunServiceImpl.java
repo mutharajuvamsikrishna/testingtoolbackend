@@ -58,7 +58,7 @@ public class TestRunServiceImpl implements TestRunService {
         runConfig.setRetryCount(0);
         runConfig.setOverrideReport(false);
 // JIRA bug reporting
-        runConfig.setCreateJiraIssues(true);
+        runConfig.setCreateJiraIssues(false);
         runConfigRepo.save(runConfig);
         return testRun1;
     }
@@ -261,9 +261,21 @@ public class TestRunServiceImpl implements TestRunService {
                 existingTestRunAndCase.setStatus(testResultDto.getStatus());
                 existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
+                List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
+                boolean allComplete = testRunAndCases.stream()
+                        .allMatch(tc -> "Completed".equalsIgnoreCase(tc.getStatus()));
+                boolean anyInProgress = testRunAndCases.stream()
+                        .anyMatch(tc -> "In Progress".equalsIgnoreCase(tc.getStatus()));
 
-                TestCase testCase = testCaseRepository.findByProjectIdAndAutomationId(testRunOpt.get().getProjectId(), updatedTestRunAndCase.getAutomationId());
-                testCase.setUpdatedAt(updatedTestRunAndCase.getUpdatedAt());
+                if (allComplete) {
+                    testRun.setStatus("Completed");
+                } else if (anyInProgress || "In Progress".equalsIgnoreCase(existingTestRunAndCase.getStatus())) {
+                    testRun.setStatus("In Progress");
+                } 
+
+                testRun.setUpdatedAt(LocalDateTime.now());
+                testRunRepo.save(testRun);
+
                 TestResults testResults = new TestResults();
                 testResults.setTestCaseName(updatedTestRunAndCase.getTestCaseName());
                 testResults.setAuthor(updatedTestRunAndCase.getAuthor());
@@ -278,8 +290,6 @@ public class TestRunServiceImpl implements TestRunService {
                 testRunAndTestResults.setTestResults(savedTestResults);
                 testRunAndTestResults.setTestRun(testRun);
                 testRunAndTestResultsRepo.save(testRunAndTestResults);
-                String updateMessage = "Test case " + updatedTestRunAndCase.getAutomationId() + " status updated to " + updatedTestRunAndCase.getStatus();
-//                webSocketHelper.broadcast(updateMessage);
                 return updatedTestRunAndCase;
             } else {
                 throw new Exception("TestRunAndCase not found for TestRunId: " + testResultDto.getTestRunId() + " and AutomationId: " + testResultDto.getAutomationId());

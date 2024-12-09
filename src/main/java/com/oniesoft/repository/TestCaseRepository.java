@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface TestCaseRepository extends JpaRepository<TestCase, Long> {
 	
-	List<TestCase> findByProject_Id(long projectId);
+
     Page<TestCase> findByProject_Id(long projectId, Pageable pageable);
 
     TestCase findByProjectIdAndAutomationId(long projectId, String automationId);

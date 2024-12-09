@@ -1,8 +1,13 @@
 package com.oniesoft.controller;
 
+import com.oniesoft.dto.UserConfigDto;
 import com.oniesoft.model.UserConfig;
 import com.oniesoft.service.UserConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +40,25 @@ public class UserConfigController {
         return userConfigService.getAllConfig();
     }
     @GetMapping("/getconfigsbyuid/{userId}")
-    public List<UserConfig> getListConfigByUserId(@PathVariable int userId){
-        return userConfigService.getAllUserConfigByUserId(userId);
+    public ResponseEntity<?> getListConfigByUserId(
+            @PathVariable int userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        try {
+
+
+
+            // Create Pageable object
+            Pageable pageable = PageRequest.of(page, size);
+
+            // Fetch paginated data
+            Page<UserConfigDto> userConfigDtos = userConfigService.getListOfConfigById(userId, pageable);
+
+            return ResponseEntity.ok(userConfigDtos);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     @DeleteMapping("/deleteconfigbyid/{id}")
     public String deleteConfig(@PathVariable int id){

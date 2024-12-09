@@ -1,6 +1,8 @@
 package com.oniesoft.repository;
 
 import com.oniesoft.model.UserConfig;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,9 @@ public interface UserConfigRepo extends JpaRepository<UserConfig,Integer> {
 
     Optional<UserConfig> findByProjectId(Long projectId);
 
-    List<UserConfig> findByUserId(int userId);
+ 
 
-    UserConfig findByUserIdAndProjectId(int userId, int projectId);
+    UserConfig findByUserIdAndProjectId(int userId, Long projectId);
+
+    Page<UserConfig> findByUserId(int userId, Pageable pageable);
 }

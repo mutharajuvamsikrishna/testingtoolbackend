@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 public class RunConfig {
     @Id
@@ -29,6 +32,12 @@ public class RunConfig {
     //            JIRA CONFIGURATIONS
 // JIRA bug reporting
     private boolean createJiraIssues;
+
+    // Separate fields for scheduling
+
+    private boolean scheduleExecution;  // Flag to enable/disable scheduling
+    private LocalDate scheduledDate;    // Execution date
+    private LocalTime scheduledTime;    // Execution time
 
     public RunConfig() {
 
@@ -130,6 +139,30 @@ public class RunConfig {
         this.createJiraIssues = createJiraIssues;
     }
 
+    public boolean isScheduleExecution() {
+        return scheduleExecution;
+    }
+
+    public void setScheduleExecution(boolean scheduleExecution) {
+        this.scheduleExecution = scheduleExecution;
+    }
+
+    public LocalDate getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(LocalDate scheduledDate) {
+        this.scheduledDate = scheduledDate;
+    }
+
+    public LocalTime getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(LocalTime scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
+
     @Override
     public String toString() {
         return "RunConfig{" +
@@ -145,6 +178,9 @@ public class RunConfig {
                 ", retryCount=" + retryCount +
                 ", overrideReport=" + overrideReport +
                 ", createJiraIssues=" + createJiraIssues +
+                ", scheduleExecution=" + scheduleExecution +
+                ", scheduledDate=" + scheduledDate +
+                ", scheduledTime=" + scheduledTime +
                 '}';
     }
 }
