@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -135,9 +136,10 @@ public class TestRunServiceImpl implements TestRunService {
     }
 
     @Override
-    public Page<TestRun> getTestRunById(Long projectId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return testRunRepo.findByProjectId(projectId, pageable);
+    public Page<TestRunTableViewDTO> getTestRunById(Long projectId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<TestRun> testRuns = testRunRepo.findByProjectId(projectId, pageable);
+        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRun.getId()).size(), "TO DO"));
     }
 
     @Override
