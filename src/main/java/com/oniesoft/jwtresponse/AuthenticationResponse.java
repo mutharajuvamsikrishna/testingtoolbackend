@@ -4,6 +4,7 @@ import com.oniesoft.model.Register;
 
 public class AuthenticationResponse {
     private String jwt;
+    private int id;
     private String empName;
     private String empEmail;
     private String empMob;
@@ -14,8 +15,9 @@ public class AuthenticationResponse {
 
     // Constructors, getters, and setters
 
-    public AuthenticationResponse(String jwt, String empName, String empEmail, String empMob, String empRole, String empDepartment, boolean status, int branchId) {
+    public AuthenticationResponse(String jwt, String empName,int id, String empEmail, String empMob, String empRole, String empDepartment, boolean status, int branchId) {
         this.jwt = jwt;
+        this.id=id;
         this.empName = empName;
         this.empEmail = empEmail;
         this.empMob = empMob;
@@ -31,6 +33,14 @@ public class AuthenticationResponse {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmpName() {
