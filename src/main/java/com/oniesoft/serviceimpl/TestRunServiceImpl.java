@@ -49,7 +49,7 @@ public class TestRunServiceImpl implements TestRunService {
         runConfig.setTraceView(false);
         runConfig.setEnableRecording(false);
 
-        runConfig.setTestType("none");
+        runConfig.setTestType("all");
         runConfig.setShortWait(15);
         runConfig.setCustomWait(30);
         runConfig.setRetryCount(0);
@@ -106,7 +106,7 @@ public class TestRunServiceImpl implements TestRunService {
         List<TestRunAndTestCase> ele = new ArrayList<>();
 
         List<Long> testCaseIDs = testRunRequest.getTestCaseId().stream().map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
-
+                  testRun.setTestCaseCount(testCaseIDs.size());
         // Link each TestCase to the existing TestRun
         for (Long testCaseId : testCaseIDs) {
             TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
@@ -122,7 +122,8 @@ public class TestRunServiceImpl implements TestRunService {
             testRunAndCase.setUpdatedAt(LocalDateTime.now());
             TestRunAndCase testRunAndCase1 = testRunAndCaseRepo.save(testRunAndCase);
             TestRunAndTestCase link = new TestRunAndTestCase();
-            link.setTestRun(testRun);
+            TestRun  testRun1=testRunRepo.save(testRun);
+            link.setTestRun(testRun1);
             link.setTestCase(testRunAndCase1);
             ele.add(link);
             testRunAndTestCaseRepo.save(link);
@@ -135,7 +136,7 @@ public class TestRunServiceImpl implements TestRunService {
     public Page<TestRunTableViewDTO> getTestRunById(Long projectId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<TestRun> testRuns = testRunRepo.findByProjectId(projectId, pageable);
-        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRunAndTestCaseRepo.findTestCaseIdsByTestRunId(testRun.getId()).size(), "TO DO"));
+        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), "TO DO"));
     }
 
     @Override

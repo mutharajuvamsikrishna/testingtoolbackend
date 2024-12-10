@@ -10,6 +10,7 @@ public class TestRun {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String testRunName;
+    private int testCaseCount;
     private String status;
     private String createdBy;
     private String startedBy;
@@ -35,6 +36,14 @@ public class TestRun {
 
     public void setTestRunName(String testRunName) {
         this.testRunName = testRunName;
+    }
+
+    public int getTestCaseCount() {
+        return testCaseCount;
+    }
+
+    public void setTestCaseCount(int testCaseCount) {
+        this.testCaseCount = testCaseCount;
     }
 
     public String getStatus() {
@@ -98,6 +107,7 @@ public class TestRun {
         return "TestRun{" +
                 "id=" + id +
                 ", testRunName='" + testRunName + '\'' +
+                ", testCaseCount=" + testCaseCount +
                 ", status='" + status + '\'' +
                 ", createdBy='" + createdBy + '\'' +
                 ", startedBy='" + startedBy + '\'' +
