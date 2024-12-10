@@ -13,6 +13,8 @@ public class TestResultDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
   private String excuteTime;
+  private String traceStack;
+  private String image;
 public TestResultDto(){
 
 }
@@ -89,6 +91,22 @@ public TestResultDto(){
         this.excuteTime = excuteTime;
     }
 
+    public String getTraceStack() {
+        return traceStack;
+    }
+
+    public void setTraceStack(String traceStack) {
+        this.traceStack = traceStack;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "TestResultDto{" +
@@ -101,6 +119,9 @@ public TestResultDto(){
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", excuteTime='" + excuteTime + '\'' +
+                ", traceStack='" + traceStack + '\'' +
+                ", image='" + image + '\'' +
                 '}';
     }
 }
+
