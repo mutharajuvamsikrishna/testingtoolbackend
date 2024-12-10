@@ -56,6 +56,7 @@ public class TestRunServiceImpl implements TestRunService {
         runConfig.setOverrideReport(false);
 // JIRA bug reporting
         runConfig.setCreateJiraIssues(false);
+        runConfig.setScheduleExecution(false);
         runConfigRepo.save(runConfig);
         return testRun1;
     }

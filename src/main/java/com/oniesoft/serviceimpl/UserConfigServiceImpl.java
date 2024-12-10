@@ -81,7 +81,7 @@ public Page<UserConfigDto> getListOfConfigById(int userId, Pageable pageable) th
     });
 }
     private UserConfigDto userConfigResponse(UserConfig userConfig,Project project){
-        return new UserConfigDto(project.getUrl(),project.isBasicAuth(),project.getBasicAuthUser(),project.getBasicAuthPassword(),project.isEnableLiveReporting(),project.getElasticSearchURL(),project.isNotifyTeams(),
+        return new UserConfigDto(project.getUrl(),project.getProjectName(),project.isBasicAuth(),project.getBasicAuthUser(),project.getBasicAuthPassword(),project.isEnableLiveReporting(),project.getElasticSearchURL(),project.isNotifyTeams(),
                 project.getNotifyBlockerCount(),project.getNotifyCriticalCount(),project.getNotifyMajorCount(),project.isSendEmailReport(),project.getEmailReportTo(),project.getJiraUserName(),project.getJiraPassword(),project.getJiraURL(),
                 project.getJiraProjectKey(),userConfig.getIpAddress(),userConfig.getProjectPath());
     }

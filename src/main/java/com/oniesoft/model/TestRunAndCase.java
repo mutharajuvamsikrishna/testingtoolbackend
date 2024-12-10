@@ -18,6 +18,8 @@ public class TestRunAndCase {
         private String feature;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private String traceStack;
+        private String image;
          private String excuteTime;
 public TestRunAndCase(){
 
@@ -95,6 +97,22 @@ public TestRunAndCase(){
         this.updatedAt = updatedAt;
     }
 
+    public String getTraceStack() {
+        return traceStack;
+    }
+
+    public void setTraceStack(String traceStack) {
+        this.traceStack = traceStack;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public String getExcuteTime() {
         return excuteTime;
     }
@@ -102,6 +120,5 @@ public TestRunAndCase(){
     public void setExcuteTime(String excuteTime) {
         this.excuteTime = excuteTime;
     }
-
 }
 
