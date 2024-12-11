@@ -145,10 +145,10 @@ private FileServiceImpl fileService;
     public Page<TestRunTableViewDTO> getTestRunById(Long projectId, String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<TestRun> testRuns;
-        if(query == null) {
-          testRuns = testRunRepo.findByProjectId(projectId, pageable);
-        }else{
+        if(query.equalsIgnoreCase("completed")) {
             testRuns = testRunRepo.findByProjectIdAndStatus(projectId,query,pageable);
+        }else{
+            testRuns = testRunRepo.findByProjectId(projectId, pageable);
         }
         return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), "TO DO"));
     }
