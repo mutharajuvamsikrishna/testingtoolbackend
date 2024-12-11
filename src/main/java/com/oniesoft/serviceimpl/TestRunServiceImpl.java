@@ -297,11 +297,11 @@ private FileServiceImpl fileService;
 //    Clone TestRun
 
     @Override
-    public List<TestRunAndTestCase> cloneTestRun(int id, Long projectId) {
+    public List<TestRunAndTestCase> cloneTestRun(int id, Long projectId, Map<String, String> testRunName) {
         Optional<TestRun> testRunOld = testRunRepo.findById(id);
         List<TestRunAndCase> testCasesByTestRunId = this.getTestCasesByTestRunId(id);
         TestRun testRunNew = new TestRun();
-        testRunNew.setTestRunName(testRunOld.get().getTestRunName() + " - Clone");
+        testRunNew.setTestRunName(testRunName.get("testRunName"));
         testRunNew.setCreatedBy(testRunOld.get().getCreatedBy());
         testRunNew.setProjectId(testRunOld.get().getProjectId());
         TestRun testRun = this.createTestRun(testRunNew);

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -91,8 +92,8 @@ public class TestRunController {
     }
 
     @PostMapping("/cloneTestRun/{id}")
-    public ResponseEntity<List<TestRunAndTestCase>> cloneTestRun(@PathVariable int id, @RequestParam Long projectId) {
-        List<TestRunAndTestCase> ele = testRunService.cloneTestRun(id, projectId);
+    public ResponseEntity<List<TestRunAndTestCase>> cloneTestRun(@PathVariable int id, @RequestParam Long projectId, @RequestBody Map<String, String> testRunName) {
+        List<TestRunAndTestCase> ele = testRunService.cloneTestRun(id, projectId, testRunName);
         if (ele != null) {
             return ResponseEntity.ok(ele);
 

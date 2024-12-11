@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TestRunService {
 
@@ -66,5 +67,5 @@ public interface TestRunService {
 
     TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception;
 
-    List<TestRunAndTestCase> cloneTestRun(int id, Long projectId);
+    List<TestRunAndTestCase> cloneTestRun(int id, Long projectId, Map<String, String> testRunName);
 }
