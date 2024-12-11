@@ -3,7 +3,6 @@ package com.oniesoft.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 public class TestRunAndCase {
@@ -20,7 +19,16 @@ public class TestRunAndCase {
     private LocalDateTime updatedAt;
     private String traceStack;
     private String image;
-    private String excuteTime;
+    private String executeTime;
+    private String testType;
+
+    public String getTestType() {
+        return testType;
+    }
+
+    public void setTestType(String testType) {
+        this.testType = testType;
+    }
 
     public TestRunAndCase() {
 
@@ -114,12 +122,12 @@ public class TestRunAndCase {
         this.image = image;
     }
 
-    public String getExcuteTime() {
-        return excuteTime;
+    public String getExecuteTime() {
+        return executeTime;
     }
 
-    public void setExcuteTime(String excuteTime) {
-        this.excuteTime = excuteTime;
+    public void setExecuteTime(String executeTime) {
+        this.executeTime = executeTime;
     }
 }
 

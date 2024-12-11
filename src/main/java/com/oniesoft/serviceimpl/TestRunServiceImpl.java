@@ -36,8 +36,9 @@ public class TestRunServiceImpl implements TestRunService {
     private UserConfigRepo userConfigRepo;
     @Autowired
     private RunConfigRepo runConfigRepo;
-@Autowired
-private FileServiceImpl fileService;
+    @Autowired
+    private FileServiceImpl fileService;
+
     @Override
     public TestRun createTestRun(TestRun testRun) {
         testRun.setCreatedAt(LocalDateTime.now());
@@ -103,7 +104,7 @@ private FileServiceImpl fileService;
 
         // add test cases from the request to test run if the number of test cases in the run is 0 (First time adding cases to run)
         List<Long> testCaseIDs = new ArrayList<>();
-        if(testCasesByTestRunId.isEmpty()) {
+        if (testCasesByTestRunId.isEmpty()) {
             testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByAutomationId(id).getId()).toList();
             testRun.setTestCaseCount(testCaseIDs.size());
         } else {
@@ -145,9 +146,9 @@ private FileServiceImpl fileService;
     public Page<TestRunTableViewDTO> getTestRunById(Long projectId, String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<TestRun> testRuns;
-        if(query.equalsIgnoreCase("completed")) {
-            testRuns = testRunRepo.findByProjectIdAndStatus(projectId,query,pageable);
-        }else{
+        if (query.equalsIgnoreCase("completed")) {
+            testRuns = testRunRepo.findByProjectIdAndStatus(projectId, query, pageable);
+        } else {
             testRuns = testRunRepo.findByProjectId(projectId, pageable);
         }
         return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), "TO DO"));
@@ -177,7 +178,7 @@ private FileServiceImpl fileService;
 
         // Get Test cases in a page
         List<TestCaseDTO> casesInProject = testCases.getContent().stream().map(testCase ->
-            new TestCaseDTO(testCase.getId(), testCase.getTestCaseName(), testCase.getAuthor(), testCase.getAutomationId(), testCase.getFeature(), testCase.getProject())
+                new TestCaseDTO(testCase.getId(), testCase.getTestCaseName(), testCase.getAuthor(), testCase.getAutomationId(), testCase.getFeature(), testCase.getProject())
         ).toList();
         // Set pagination metadata
         ApiResponse.PaginationMetadata pagination = new ApiResponse.PaginationMetadata(
@@ -273,15 +274,16 @@ private FileServiceImpl fileService;
             if (existingTestRunAndCase != null) {
                 existingTestRunAndCase.setStatus(testResultDto.getStatus());
                 existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
-                existingTestRunAndCase.setExcuteTime(testResultDto.getExcuteTime());
-                existingTestRunAndCase.setTraceStack(testResultDto.getTestCaseName());
-                String path="";
+                existingTestRunAndCase.setExecuteTime(testResultDto.getExecuteTime());
+                existingTestRunAndCase.setTraceStack(testResultDto.getTraceStack());
+                existingTestRunAndCase.setTestType(testResultDto.getTestType());
+                String path = "";
                 try {
-                    path=fileService.saveFile(testResultDto.getImage());
-                } catch (Exception e){
+                    path = fileService.saveFile(testResultDto.getImage());
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
-               existingTestRunAndCase.setImage(path);
+                existingTestRunAndCase.setImage(path);
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()
@@ -293,7 +295,7 @@ private FileServiceImpl fileService;
                     testRun.setStatus("Completed");
                 } else if (anyInProgress || "In Progress".equalsIgnoreCase(existingTestRunAndCase.getStatus())) {
                     testRun.setStatus("In Progress");
-                } 
+                }
 
                 testRun.setUpdatedAt(LocalDateTime.now());
                 testRunRepo.save(testRun);
