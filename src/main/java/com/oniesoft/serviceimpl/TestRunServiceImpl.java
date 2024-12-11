@@ -98,15 +98,23 @@ public class TestRunServiceImpl implements TestRunService {
         // Fetch test case of the run
         List<TestRunAndCase> testCasesByTestRunId = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunRequest.getTestRunId());
 
-        // Delete all test cases in that run and their links
-        testCasesByTestRunId.forEach(testRunAndCase -> testRunAndTestCaseRepo.deleteTestRunAndTestCaseById(testRunAndCase.getId()));
-        testRunAndCaseRepo.deleteAllById(testCasesByTestRunId.stream().map(TestRunAndCase::getId).toList());
-
+        // add test cases from the request to test run if the number of test cases in the run is 0 (First time adding cases to run)
+        List<Long> testCaseIDs = new ArrayList<>();
+        if(testCasesByTestRunId.isEmpty()) {
+            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByAutomationId(id).getId()).toList();
+            testRun.setTestCaseCount(testCaseIDs.size());
+        } else {
+            // Delete given test case in request from both the repos
+            List<Long> ids = testRunRequest.getTestCaseIdsToRemove()
+                    .stream().map(autoId -> testCasesByTestRunId.stream().filter(testCase -> testCase.getAutomationId().equals(autoId)).findFirst().get().getId()).toList();
+            ids.forEach(testRunAndTestCaseRepo::deleteTestRunAndTestCaseById);
+            testRunAndCaseRepo.deleteAllById(ids);
+            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByAutomationId(id).getId()).toList();
+            testRun.setTestCaseCount(testRun.getTestCaseCount() + testCaseIDs.size() - ids.size());
+        }
+        testRunRepo.save(testRun);
 
         List<TestRunAndTestCase> ele = new ArrayList<>();
-
-        List<Long> testCaseIDs = testRunRequest.getTestCaseId().stream().map(autoId -> testCaseRepository.findByAutomationId(autoId).getId()).toList();
-                  testRun.setTestCaseCount(testCaseIDs.size());
         // Link each TestCase to the existing TestRun
         for (Long testCaseId : testCaseIDs) {
             TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCaseId));
@@ -122,13 +130,11 @@ public class TestRunServiceImpl implements TestRunService {
             testRunAndCase.setUpdatedAt(LocalDateTime.now());
             TestRunAndCase testRunAndCase1 = testRunAndCaseRepo.save(testRunAndCase);
             TestRunAndTestCase link = new TestRunAndTestCase();
-            TestRun  testRun1=testRunRepo.save(testRun);
-            link.setTestRun(testRun1);
+            link.setTestRun(testRun);
             link.setTestCase(testRunAndCase1);
             ele.add(link);
             testRunAndTestCaseRepo.save(link);
         }
-
         return ele;
     }
 

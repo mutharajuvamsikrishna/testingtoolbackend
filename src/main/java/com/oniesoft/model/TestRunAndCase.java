@@ -7,21 +7,18 @@ import java.util.List;
 
 @Entity
 public class TestRunAndCase {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long id;
-        private String testCaseName;
-        private String status;
-        private String author;
-        private String automationId;
-        private Long testCaseId;
-        private String feature;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-         private String excuteTime;
-public TestRunAndCase(){
-
-}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String testCaseName;
+    private String status;
+    private String author;
+    private String automationId;
+    private Long testCaseId;
+    private String feature;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String excuteTime;public TestRunAndCase() {}
 
     public long getId() {
         return id;
