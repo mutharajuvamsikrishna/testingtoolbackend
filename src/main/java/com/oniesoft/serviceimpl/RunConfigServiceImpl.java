@@ -39,6 +39,11 @@ public class RunConfigServiceImpl implements RunConfigService {
     public RunConfig updateRunConfig(RunConfig runConfig) throws Exception {
         Optional<RunConfig> runConfig1 = runConfigRepo.findById(runConfig.getId());
         if (runConfig1.isPresent()) {
+            if(runConfig1.get().isScheduleExecution()){
+                TestRun testRun=testRunRepo.findById(runConfig1.get().getId()).get();
+                testRun.setStatus("Scheduled");
+                testRunRepo.save(testRun);
+            }
             return runConfigRepo.save(runConfig);
         } else {
             throw new Exception("We Didn't Find RunConfig ID of " + runConfig.getId());

@@ -3,6 +3,7 @@ package com.oniesoft.dto;
 public class UserConfigDto {
     private String url;
     //	base url of api
+    private String projectName;
     private boolean basicAuth;
     private String basicAuthUser;
     private String basicAuthPassword;
@@ -30,8 +31,9 @@ public class UserConfigDto {
     private String ipAddress;
     private String projectPath;
 
-    public UserConfigDto(String url, boolean basicAuth, String basicAuthUser, String basicAuthPassword, boolean enableLiveReporting, String elasticSearchURL, boolean notifyTeams, int notifyBlockerCount, int notifyCriticalCount, int notifyMajorCount, boolean sendEmailReport, String emailReportTo, String jiraUserName, String jiraPassword, String jiraURL, String jiraProjectKey, String ipAddress, String projectPath) {
+    public UserConfigDto(String url,String projectName, boolean basicAuth, String basicAuthUser, String basicAuthPassword, boolean enableLiveReporting, String elasticSearchURL, boolean notifyTeams, int notifyBlockerCount, int notifyCriticalCount, int notifyMajorCount, boolean sendEmailReport, String emailReportTo, String jiraUserName, String jiraPassword, String jiraURL, String jiraProjectKey, String ipAddress, String projectPath) {
         this.url = url;
+        this.projectName=projectName;
         this.basicAuth = basicAuth;
         this.basicAuthUser = basicAuthUser;
         this.basicAuthPassword = basicAuthPassword;
@@ -49,6 +51,10 @@ public class UserConfigDto {
         this.jiraProjectKey = jiraProjectKey;
         this.ipAddress = ipAddress;
         this.projectPath = projectPath;
+    }
+
+    public String getProjectName() {
+        return projectName;
     }
 
     public String getUrl() {

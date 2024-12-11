@@ -36,7 +36,8 @@ public class TestRunServiceImpl implements TestRunService {
     private UserConfigRepo userConfigRepo;
     @Autowired
     private RunConfigRepo runConfigRepo;
-
+@Autowired
+private FileServiceImpl fileService;
     @Override
     public TestRun createTestRun(TestRun testRun) {
         testRun.setCreatedAt(LocalDateTime.now());
@@ -56,6 +57,7 @@ public class TestRunServiceImpl implements TestRunService {
         runConfig.setOverrideReport(false);
 // JIRA bug reporting
         runConfig.setCreateJiraIssues(false);
+        runConfig.setScheduleExecution(false);
         runConfigRepo.save(runConfig);
         return testRun1;
     }
@@ -266,6 +268,8 @@ public class TestRunServiceImpl implements TestRunService {
                 existingTestRunAndCase.setStatus(testResultDto.getStatus());
                 existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
                 existingTestRunAndCase.setExcuteTime(testResultDto.getExcuteTime());
+                existingTestRunAndCase.setTraceStack(testResultDto.getTestCaseName());
+               existingTestRunAndCase.setImage(testResultDto.getImage());
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()
