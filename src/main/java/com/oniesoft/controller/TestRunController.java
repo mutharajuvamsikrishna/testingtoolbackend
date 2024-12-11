@@ -45,7 +45,7 @@ public class TestRunController {
     }
 
     @GetMapping("/gettestrunbyid")
-    public Page<TestRunTableViewDTO> getTestRunByProjectId(@RequestParam Long projectId,@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public Page<TestRunTableViewDTO> getTestRunByProjectId(@RequestParam Long projectId,@RequestParam(defaultValue = "New") String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return testRunService.getTestRunById(projectId,query, page, size);
     }
 

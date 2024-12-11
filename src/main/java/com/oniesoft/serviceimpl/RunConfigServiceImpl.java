@@ -95,6 +95,7 @@ public class RunConfigServiceImpl implements RunConfigService {
     private ConfigurationDto buildConfigurationDto(Project project, RunConfig runConfig) {
         return new ConfigurationDto(
                 project.getUrl(),
+                project.getApiBaseURL(),
                 project.isBasicAuth(),
                 project.getBasicAuthUser(),
                 project.getBasicAuthPassword(),

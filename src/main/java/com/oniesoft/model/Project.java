@@ -24,6 +24,7 @@ public class Project {
 
     //	 PROJECT CONFIGURATIONS
     private String url;
+    private String apiBaseURL;
     //	base url of api
     private boolean basicAuth;
     private String basicAuthUser;
@@ -229,6 +230,14 @@ public class Project {
         this.jiraProjectKey = jiraProjectKey;
     }
 
+    public String getApiBaseURL() {
+        return apiBaseURL;
+    }
+
+    public void setApiBaseURL() {
+        this.apiBaseURL = apiBaseURL;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
@@ -239,6 +248,7 @@ public class Project {
                 ", branchId=" + branchId +
                 ", testCases=" + testCases +
                 ", url='" + url + '\'' +
+                ", apiBaseURL='" + apiBaseURL + '\'' +
                 ", basicAuth=" + basicAuth +
                 ", basicAuthUser='" + basicAuthUser + '\'' +
                 ", basicAuthPassword='" + basicAuthPassword + '\'' +
