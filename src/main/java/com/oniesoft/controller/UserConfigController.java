@@ -18,27 +18,31 @@ import java.util.List;
 public class UserConfigController {
     @Autowired
     private UserConfigService userConfigService;
+
     @PostMapping("/save")
-    public UserConfig userConfig(@RequestBody UserConfig userConfig){
+    public UserConfig userConfig(@RequestBody UserConfig userConfig) {
         try {
             return userConfigService.addOrUpdateConfig(userConfig);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
     @GetMapping("/getconfigbyid/{id}")
     public ResponseEntity<?> getById(@PathVariable int id) throws Exception {
         try {
             UserConfig userConfig = userConfigService.getConfigById(id);
             return ResponseEntity.ok(userConfig);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @GetMapping("/getallconfig")
-    public List<UserConfig> getAllConfig(){
+    public List<UserConfig> getAllConfig() {
         return userConfigService.getAllConfig();
     }
+
     @GetMapping("/getconfigsbyuid/{userId}")
     public ResponseEntity<?> getListConfigByUserId(
             @PathVariable int userId,
@@ -46,7 +50,6 @@ public class UserConfigController {
             @RequestParam(defaultValue = "10") int size) {
 
         try {
-
 
 
             // Create Pageable object
@@ -60,12 +63,13 @@ public class UserConfigController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @DeleteMapping("/deleteconfigbyid/{id}")
-    public String deleteConfig(@PathVariable int id){
-        String msg=userConfigService.deleteConfig(id);
-        if(msg.isEmpty()){
+    public String deleteConfig(@PathVariable int id) {
+        String msg = userConfigService.deleteConfig(id);
+        if (msg.isEmpty()) {
             return "Something Went Wrong";
-        }else {
+        } else {
             return "Deleted SuccessFully";
         }
     }
