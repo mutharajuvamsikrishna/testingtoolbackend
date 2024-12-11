@@ -1,84 +1,64 @@
 package com.oniesoft.serviceimpl;
 
-import com.oniesoft.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 @Service
-class FileServiceImpl implements FileService {
+class FileServiceImpl {
     @Value("${file.upload-dir}")
     private String uploadDir;
-    public String saveFile(Long regno, String fileType, MultipartFile file) throws IOException {
-
-
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String userDir = uploadDir + "/" + regno;
-        String filePath = userDir + "/" + fileType + "_" + fileName;
-
-        // Create the user directory if it doesn't exist
-        Files.createDirectories(Path.of(userDir));
-
-        // Save the file to the specified path
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, Path.of(filePath), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new IOException("Failed to save file " + fileName, e);
+    public String saveFile(String base64WithPrefix) throws IOException, NoSuchAlgorithmException {
+        // Split the Base64 string into metadata and data
+        String[] parts = base64WithPrefix.split(",");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid Base64 format");
         }
+
+        // Extract file type from the metadata (e.g., data:image/png;base64)
+        String metadata = parts[0];
+        String base64Data = parts[1];
+
+        // Determine the file type from metadata
+        String fileType = "unknown";
+        if (metadata.startsWith("data:") && metadata.contains(";")) {
+            fileType = metadata.substring(5, metadata.indexOf(";"));
+        }
+        String extension = fileType.contains("/") ? fileType.substring(fileType.indexOf("/") + 1) : "bin";
+
+        // Generate a hash-based file name
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] fileBytes = Base64.getDecoder().decode(base64Data);
+        byte[] hash = digest.digest(fileBytes);
+        StringBuilder hashString = new StringBuilder();
+        for (byte b : hash) {
+            hashString.append(String.format("%02x", b));
+        }
+        String fileName = hashString.toString() + "." + extension;
+
+        // Save the file
+        String userDir = uploadDir + "/images";
+        String filePath = userDir + "/" + fileName;
+        Files.createDirectories(Path.of(userDir));
+        Files.write(Path.of(filePath), fileBytes);
 
         return filePath;
     }
-    @Override
-    public void deleteFile(Long regno, String fileType, String fileName) throws IOException {
-        String userDir = uploadDir + "/" + regno;
-        String filePath = "";
+    public void deleteImage(String filePath) throws IOException {
+        // Get the absolute path of the file to delete
+        Path pathToDelete = Paths.get(filePath);
 
-        // Determine if we are deleting a specific file or the entire folder
-        if (!fileType.isEmpty()) {
-            filePath = userDir + "/" + fileType + "_" + fileName;
+        // Check if the file exists and delete it
+        if (Files.exists(pathToDelete)) {
+            Files.delete(pathToDelete);
         } else {
-            filePath = userDir;
+            throw new IOException("File not found: " + filePath);
         }
-
-        Path pathToDelete = Path.of(filePath);
-        System.out.println("Deleting: " + filePath);
-
-        // Check if it's a directory
-        if (Files.isDirectory(pathToDelete)) {
-            // Recursively delete contents of the directory
-            deleteDirectoryRecursively(pathToDelete);
-        } else {
-            // Delete the file
-            try {
-                Files.delete(pathToDelete);
-            } catch (NoSuchFileException e) {
-                throw new IOException("File " + filePath + " not found", e);
-            } catch (IOException e) {
-                throw new IOException("Failed to delete file " + fileName, e);
-            }
-        }
-    }
-
-    // Helper method to recursively delete directory contents
-    private void deleteDirectoryRecursively(Path dir) throws IOException {
-        // Walk the file tree and delete files and subdirectories
-        Files.walk(dir)
-                .sorted((a, b) -> b.compareTo(a))  // Sort in reverse order to delete files before directories
-                .forEach(path -> {
-                    try {
-                        Files.delete(path);
-                    } catch (IOException e) {
-                        throw new RuntimeException("Failed to delete " + path, e);
-                    }
-                });
     }
 
 }

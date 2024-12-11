@@ -25,9 +25,8 @@ public class ChartServiceImpl implements ChartService {
     @Autowired
     private TestRunRepo testRunRepo;
     @Override
-    public TestRunResults getAllTestResultsStatus() {
-        List<TestRun> testRuns = testRunRepo.findAll();
-
+    public TestRunResults getAllTestResultsStatus(long projectId) {
+        List<TestRun> testRuns = testRunRepo.findByProjectId(projectId);
         // Count the statuses using Java Streams
         int totalTestRuns = testRuns.size();
         int newStatusWithTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus()))&&testRun.getTestCaseCount()>0).count();

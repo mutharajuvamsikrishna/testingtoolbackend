@@ -42,6 +42,7 @@ private FileServiceImpl fileService;
     public TestRun createTestRun(TestRun testRun) {
         testRun.setCreatedAt(LocalDateTime.now());
         testRun.setUpdatedAt(LocalDateTime.now());
+        testRun.setStatus("New");
         TestRun testRun1 = testRunRepo.save(testRun);
         RunConfig runConfig = new RunConfig();
         runConfig.setTestRunId(testRun1.getId());
@@ -135,9 +136,14 @@ private FileServiceImpl fileService;
     }
 
     @Override
-    public Page<TestRunTableViewDTO> getTestRunById(Long projectId, int page, int size) {
+    public Page<TestRunTableViewDTO> getTestRunById(Long projectId, String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<TestRun> testRuns = testRunRepo.findByProjectId(projectId, pageable);
+        Page<TestRun> testRuns;
+        if(query == null) {
+          testRuns = testRunRepo.findByProjectId(projectId, pageable);
+        }else{
+            testRuns = testRunRepo.findByProjectIdAndStatus(projectId,query,pageable);
+        }
         return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), "TO DO"));
     }
 
@@ -263,7 +269,13 @@ private FileServiceImpl fileService;
                 existingTestRunAndCase.setUpdatedAt(LocalDateTime.now());
                 existingTestRunAndCase.setExcuteTime(testResultDto.getExcuteTime());
                 existingTestRunAndCase.setTraceStack(testResultDto.getTestCaseName());
-               existingTestRunAndCase.setImage(testResultDto.getImage());
+                String path="";
+                try {
+                    path=fileService.saveFile(testResultDto.getImage());
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+               existingTestRunAndCase.setImage(path);
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()

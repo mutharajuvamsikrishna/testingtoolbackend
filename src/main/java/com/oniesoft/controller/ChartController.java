@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChartController {
     @Autowired
     private ChartService chartService;
-    @GetMapping("gettestrunresults")
-    public TestRunResults getTestResults(){
-        return chartService.getAllTestResultsStatus();
+    @GetMapping("gettestrunresultsbyprojectid/{projectId}")
+    public TestRunResults getTestResultsByProjectId(@PathVariable Long projectId){
+        return chartService.getAllTestResultsStatus(projectId);
     }
 @GetMapping("gettestcaseresults/{testRunId}")
     public TestCaseResults getTestCaseResultsByTRId(@PathVariable int testRunId){
