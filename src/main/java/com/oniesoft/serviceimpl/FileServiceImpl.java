@@ -3,6 +3,7 @@ package com.oniesoft.serviceimpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.MessageDigest;
@@ -11,8 +12,8 @@ import java.util.Base64;
 
 @Service
 class FileServiceImpl {
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+
+    private String uploadDir=System.getProperty("user.dir")+ File.separator+"assets";
     public String saveFile(String base64Data) throws IOException, NoSuchAlgorithmException {
         // Assume a default file extension
         String extension = "png";
