@@ -13,23 +13,9 @@ import java.util.Base64;
 class FileServiceImpl {
     @Value("${file.upload-dir}")
     private String uploadDir;
-    public String saveFile(String base64WithPrefix) throws IOException, NoSuchAlgorithmException {
-        // Split the Base64 string into metadata and data
-        String[] parts = base64WithPrefix.split(",");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid Base64 format");
-        }
-
-        // Extract file type from the metadata (e.g., data:image/png;base64)
-        String metadata = parts[0];
-        String base64Data = parts[1];
-
-        // Determine the file type from metadata
-        String fileType = "unknown";
-        if (metadata.startsWith("data:") && metadata.contains(";")) {
-            fileType = metadata.substring(5, metadata.indexOf(";"));
-        }
-        String extension = fileType.contains("/") ? fileType.substring(fileType.indexOf("/") + 1) : "bin";
+    public String saveFile(String base64Data) throws IOException, NoSuchAlgorithmException {
+        // Assume a default file extension
+        String extension = "png";
 
         // Generate a hash-based file name
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -49,6 +35,7 @@ class FileServiceImpl {
 
         return filePath;
     }
+
     public void deleteImage(String filePath) throws IOException {
         // Get the absolute path of the file to delete
         Path pathToDelete = Paths.get(filePath);

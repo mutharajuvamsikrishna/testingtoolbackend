@@ -17,6 +17,7 @@ public class TestRunAndCase {
     private String feature;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @Column(columnDefinition = "TEXT")
     private String traceStack;
     private String image;
     private String executeTime;
