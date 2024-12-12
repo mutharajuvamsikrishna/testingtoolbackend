@@ -105,7 +105,7 @@ public class TestRunServiceImpl implements TestRunService {
         // add test cases from the request to test run if the number of test cases in the run is 0 (First time adding cases to run)
         List<Long> testCaseIDs = new ArrayList<>();
         if (testCasesByTestRunId.isEmpty()) {
-            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByAutomationId(id).getId()).toList();
+            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByProjectIdAndAutomationId(testRun.getProjectId(),id).getId()).toList();
             testRun.setTestCaseCount(testCaseIDs.size());
         } else {
             // Delete given test case in request from both the repos
@@ -113,7 +113,7 @@ public class TestRunServiceImpl implements TestRunService {
                     .stream().map(autoId -> testCasesByTestRunId.stream().filter(testCase -> testCase.getAutomationId().equals(autoId)).findFirst().get().getId()).toList();
             ids.forEach(testRunAndTestCaseRepo::deleteTestRunAndTestCaseById);
             testRunAndCaseRepo.deleteAllById(ids);
-            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByAutomationId(id).getId()).toList();
+            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByProjectIdAndAutomationId(testRun.getProjectId(),id).getId()).toList();
             testRun.setTestCaseCount(testRun.getTestCaseCount() + testCaseIDs.size() - ids.size());
         }
         testRunRepo.save(testRun);
@@ -287,13 +287,13 @@ public class TestRunServiceImpl implements TestRunService {
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()
-                        .allMatch(tc -> "Completed".equalsIgnoreCase(tc.getStatus()));
+                        .allMatch(tc -> "New".equalsIgnoreCase(tc.getStatus()));
                 boolean anyInProgress = testRunAndCases.stream()
-                        .anyMatch(tc -> "In Progress".equalsIgnoreCase(tc.getStatus()));
+                        .anyMatch(tc -> "New".equalsIgnoreCase(tc.getStatus()));
 
-                if (allComplete) {
+                if (!allComplete) {
                     testRun.setStatus("Completed");
-                } else if (anyInProgress || "In Progress".equalsIgnoreCase(existingTestRunAndCase.getStatus())) {
+                } else if (!anyInProgress) {
                     testRun.setStatus("In Progress");
                 }
 
