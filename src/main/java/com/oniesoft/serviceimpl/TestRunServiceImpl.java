@@ -151,7 +151,7 @@ public class TestRunServiceImpl implements TestRunService {
         } else {
             testRuns = testRunRepo.findByProjectId(projectId, pageable);
         }
-        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), "TO DO"));
+        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), testRun.getStatus()));
     }
 
     @Override
