@@ -1,5 +1,7 @@
 package com.oniesoft.serviceimpl;
 
+import com.oniesoft.service.S3Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,9 @@ import java.util.Base64;
 
 @Service
 class FileServiceImpl {
+
+    @Autowired
+    S3Service s3Service;
 
     private String uploadDir=System.getProperty("user.dir")+ File.separator+"assets";
     public String saveFile(String base64Data) throws IOException, NoSuchAlgorithmException {
@@ -33,11 +38,14 @@ class FileServiceImpl {
         String filePath = userDir + "/" + fileName;
         Files.createDirectories(Path.of(userDir));
         Files.write(Path.of(filePath), fileBytes);
-
+        // TODO: Uncomment below three lines once S3 bucket is configured
+//        s3Service.uploadFile(hashString.toString(), new File(filePath));
+//        this.deleteImage(filePath);
+//        return hashString.toString();
         return filePath;
     }
 
-    public void deleteImage(String filePath) throws IOException {
+    private void deleteImage(String filePath) throws IOException {
         // Get the absolute path of the file to delete
         Path pathToDelete = Paths.get(filePath);
 

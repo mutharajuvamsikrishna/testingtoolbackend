@@ -280,6 +280,7 @@ public class TestRunServiceImpl implements TestRunService {
                 String path = "";
                 try {
                     path = fileService.saveFile(testResultDto.getImage());
+
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }

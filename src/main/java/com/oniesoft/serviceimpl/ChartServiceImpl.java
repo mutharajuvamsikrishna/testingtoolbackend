@@ -24,20 +24,22 @@ public class ChartServiceImpl implements ChartService {
     private TestRunAndTestCaseRepo testRunAndTestCaseRepo;
     @Autowired
     private TestRunRepo testRunRepo;
+
     @Override
     public TestRunResults getAllTestResultsStatus(long projectId) {
         List<TestRun> testRuns = testRunRepo.findByProjectId(projectId);
         // Count the statuses using Java Streams
         int totalTestRuns = testRuns.size();
-        int newStatusWithTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus()))&&testRun.getTestCaseCount()>0).count();
-        int newStatusWithOutTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus()))&&testRun.getTestCaseCount()<0).count();
+        int newStatusWithTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus())) && testRun.getTestCaseCount() > 0).count();
+        int newStatusWithOutTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus())) && testRun.getTestCaseCount() < 0).count();
         int inProgressStatus = (int) testRuns.stream().filter(testRun -> "InProgress".equalsIgnoreCase(testRun.getStatus())).count();
         int completed = (int) testRuns.stream().filter(testRun -> "Completed".equalsIgnoreCase(testRun.getStatus())).count();
         int scheduled = (int) testRuns.stream().filter(testRun -> "Scheduled".equalsIgnoreCase(testRun.getStatus())).count();
 
         // Return the results wrapped in the TestRunResults DTO
-        return new TestRunResults(totalTestRuns,newStatusWithTestCases,newStatusWithOutTestCases,inProgressStatus,completed,scheduled);
+        return new TestRunResults(totalTestRuns, newStatusWithTestCases, newStatusWithOutTestCases, inProgressStatus, completed, scheduled);
     }
+
     @Override
     public TestCaseResults getTestCaseResultsByTRId(int testRunId) {
         // Fetch all TestRunAndCase entries by testRunId
@@ -49,14 +51,13 @@ public class ChartServiceImpl implements ChartService {
         int fail = (int) testRunAndTestCases.stream().filter(tc -> "Fail".equalsIgnoreCase(tc.getStatus())).count();
         int skip = (int) testRunAndTestCases.stream().filter(tc -> "Skip".equalsIgnoreCase(tc.getStatus())).count();
 
-     Map<String,Integer> featureOfPassPercent=getFeatureWisePassPercentage(testRunId);
+        Map<String, Integer> featureOfPassPercent = getFeatureWisePassPercentage(testRunAndTestCases);
 
         // Create and return a TestCaseResults object
-        return new TestCaseResults(totalTestCases, pass, fail, skip, featureOfPassPercent);
+        return new TestCaseResults(totalTestCases, pass, fail, skip, featureOfPassPercent, getResultsByTestType(testRunAndTestCases));
     }
-    public Map<String, Integer> getFeatureWisePassPercentage(int testRunId) {
-        // Fetch all TestRunAndCase entries by testRunId
-        List<TestRunAndCase> testRunAndTestCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
+
+    private Map<String, Integer> getFeatureWisePassPercentage(List<TestRunAndCase> testRunAndTestCases) {
 
         // Group test cases by feature
         Map<String, List<TestRunAndCase>> groupedByFeature = testRunAndTestCases.stream()
@@ -78,5 +79,21 @@ public class ChartServiceImpl implements ChartService {
 
         return featureWisePassPercent;
     }
+
+    private Map<String, Map<String, Long>> getResultsByTestType(List<TestRunAndCase> testRunAndTestCases) {
+        // calculate pass, fail and skip count for each test type
+        // Group by Test Type
+        // Group Pass/Fail/Skip within each case
+        // Count Pass/Fail/Skip
+        return testRunAndTestCases.stream()
+                .collect(Collectors.groupingBy(
+                        TestRunAndCase::getTestType, // Group by Test Type
+                        Collectors.groupingBy( // Group Pass/Fail/ within each case
+                                TestRunAndCase::getStatus,
+                                Collectors.counting() // Count Pass/Fail
+                        )
+                ));
+    }
+
 
 }
