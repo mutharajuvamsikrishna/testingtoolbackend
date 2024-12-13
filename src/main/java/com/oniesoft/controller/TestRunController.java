@@ -50,12 +50,12 @@ public class TestRunController {
     }
 
     @GetMapping("/testcases")
-    public Page<TestRunAndCase> getTestCasesByTestRunId(@RequestParam int testRunId, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+    public Page<TestCaseInRunDTO> getTestCasesByTestRunId(@RequestParam int testRunId, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         return testRunService.getPageTestCasesByTestRunId(testRunId, page, size);
     }
 
     @GetMapping("/listoftestcases")
-    public List<TestRunAndCase> getListOfTestCasesByTestRunId(@RequestParam int testRunId) {
+    public List<TestCaseInRunDTO> getListOfTestCasesByTestRunId(@RequestParam int testRunId) {
         return testRunService.getTestCasesByTestRunId(testRunId);
     }
 

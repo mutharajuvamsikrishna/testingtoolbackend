@@ -105,7 +105,7 @@ public class TestRunServiceImpl implements TestRunService {
         // add test cases from the request to test run if the number of test cases in the run is 0 (First time adding cases to run)
         List<Long> testCaseIDs = new ArrayList<>();
         if (testCasesByTestRunId.isEmpty()) {
-            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByProjectIdAndAutomationId(testRun.getProjectId(),id).getId()).toList();
+            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByProjectIdAndAutomationId(testRun.getProjectId(), id).getId()).toList();
             testRun.setTestCaseCount(testCaseIDs.size());
         } else {
             // Delete given test case in request from both the repos
@@ -113,7 +113,7 @@ public class TestRunServiceImpl implements TestRunService {
                     .stream().map(autoId -> testCasesByTestRunId.stream().filter(testCase -> testCase.getAutomationId().equals(autoId)).findFirst().get().getId()).toList();
             ids.forEach(testRunAndTestCaseRepo::deleteTestRunAndTestCaseById);
             testRunAndCaseRepo.deleteAllById(ids);
-            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByProjectIdAndAutomationId(testRun.getProjectId(),id).getId()).toList();
+            testCaseIDs = testRunRequest.getTestCaseId().stream().map(id -> testCaseRepository.findByProjectIdAndAutomationId(testRun.getProjectId(), id).getId()).toList();
             testRun.setTestCaseCount(testRun.getTestCaseCount() + testCaseIDs.size() - ids.size());
         }
         testRunRepo.save(testRun);
@@ -155,7 +155,7 @@ public class TestRunServiceImpl implements TestRunService {
         }
 
         return testRuns.map(testRun -> {
-            System.out.println("Query is "+query);
+            System.out.println("Query is " + query);
             // Calculate total execution time more robustly
             long totalExecutionTime = "completed".equalsIgnoreCase(query)
                     ? testRunAndTestCaseRepo.findTestCasesByTestRunId(testRun.getId()).stream()
@@ -181,14 +181,27 @@ public class TestRunServiceImpl implements TestRunService {
     }
 
     @Override
-    public List<TestRunAndCase> getTestCasesByTestRunId(int testRunId) {
-        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
+    public List<TestCaseInRunDTO> getTestCasesByTestRunId(int testRunId) {
+        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId)
+                .stream()
+                .map(testRunCase -> new TestCaseInRunDTO(
+                        testRunCase.getId(), testRunCase.getTestCaseName(), testRunCase.getStatus(), testRunCase.getAuthor(),
+                        testRunCase.getAutomationId(), testRunCase.getTestCaseId(), testRunCase.getFeature(), testRunCase.getCreatedAt(),
+                        testRunCase.getUpdatedAt(), testRunCase.getTraceStack(), testRunCase.getImage(),
+                        Long.parseLong(Optional.ofNullable(testRunCase.getExecuteTime()).orElse("0").replaceAll("[^\\d.]", "")),
+                        testRunCase.getTestType()
+                )).collect(Collectors.toList());
     }
 
     @Override
-    public Page<TestRunAndCase> getPageTestCasesByTestRunId(int testRunId, int page, int size) {
+    public Page<TestCaseInRunDTO> getPageTestCasesByTestRunId(int testRunId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId, pageable);
+        return testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId, pageable).map(testRunCase -> new TestCaseInRunDTO(
+                testRunCase.getId(), testRunCase.getTestCaseName(), testRunCase.getStatus(), testRunCase.getAuthor(),
+                testRunCase.getAutomationId(), testRunCase.getTestCaseId(), testRunCase.getFeature(), testRunCase.getCreatedAt(),
+                testRunCase.getUpdatedAt(), testRunCase.getTraceStack(), testRunCase.getImage(),
+                Long.parseLong(Optional.ofNullable(testRunCase.getExecuteTime()).orElse("0").replaceAll("[^\\d.]", "")), testRunCase.getTestType()
+        ));
     }
 
     @Override
@@ -340,7 +353,7 @@ public class TestRunServiceImpl implements TestRunService {
     @Override
     public List<TestRunAndTestCase> cloneTestRun(int id, Long projectId, Map<String, String> testRunName) {
         Optional<TestRun> testRunOld = testRunRepo.findById(id);
-        List<TestRunAndCase> testCasesByTestRunId = this.getTestCasesByTestRunId(id);
+        List<TestRunAndCase> testCasesByTestRunId = testRunAndTestCaseRepo.findTestCasesByTestRunId(id);
         TestRun testRunNew = new TestRun();
         testRunNew.setTestRunName(testRunName.get("testRunName"));
         testRunNew.setCreatedBy(testRunOld.get().getCreatedBy());

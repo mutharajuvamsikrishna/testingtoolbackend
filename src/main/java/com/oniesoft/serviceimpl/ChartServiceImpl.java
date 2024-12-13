@@ -76,7 +76,7 @@ public class ChartServiceImpl implements ChartService {
         testCasesSummaryDTO.setTotalPassed((int) testRunAndCases.stream().filter(trc -> trc.getStatus().equalsIgnoreCase("fail")).count());
         testCasesSummaryDTO.setTotalPassed((int) testRunAndCases.stream().filter(trc -> trc.getStatus().equalsIgnoreCase("skip")).count());
         testCasesSummaryDTO.setExecutionTimes(testRunAndCases.stream().filter(trc -> trc.getExecuteTime() != null &&
-                !trc.getExecuteTime().equalsIgnoreCase("0 ms")).map(trc -> Long.parseLong(trc.getExecuteTime().replaceAll("[^\\d.]", ""))).collect(Collectors.toList()));
+                !trc.getExecuteTime().equalsIgnoreCase("0 ms")).map(trc ->  Long.parseLong(Optional.ofNullable(trc.getExecuteTime()).orElse("0").replaceAll("[^\\d.]", ""))).collect(Collectors.toList()));
         return testCasesSummaryDTO;
     }
 

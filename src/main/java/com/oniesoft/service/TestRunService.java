@@ -1,9 +1,6 @@
 package com.oniesoft.service;
 
-import com.oniesoft.dto.EditTestRunTestCasesDTO;
-import com.oniesoft.dto.TestResultDto;
-import com.oniesoft.dto.TestRunRequest;
-import com.oniesoft.dto.TestRunTableViewDTO;
+import com.oniesoft.dto.*;
 import com.oniesoft.model.TestRun;
 import com.oniesoft.model.TestRunAndCase;
 import com.oniesoft.model.TestRunAndTestCase;
@@ -56,9 +53,9 @@ public interface TestRunService {
 
     Page<TestRunTableViewDTO> getTestRunById(Long projectId, String query, int page, int size);
 
-    List<TestRunAndCase> getTestCasesByTestRunId(int testRunId);
+    List<TestCaseInRunDTO> getTestCasesByTestRunId(int testRunId);
 
-    Page<TestRunAndCase> getPageTestCasesByTestRunId(int testRunId, int page, int size);
+    Page<TestCaseInRunDTO> getPageTestCasesByTestRunId(int testRunId, int page, int size);
 
     EditTestRunTestCasesDTO getAllUnMappedTestCases(int testRunId, long projectid, Pageable pageable);
 
