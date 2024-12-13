@@ -14,4 +14,5 @@ public class TestRunTableViewDTO {
     private String createdBy;
     private int testCaseCount;
     private String status;
+    private Long executeTimeInMillis;
 }

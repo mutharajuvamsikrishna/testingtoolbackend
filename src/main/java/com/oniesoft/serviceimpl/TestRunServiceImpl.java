@@ -146,12 +146,38 @@ public class TestRunServiceImpl implements TestRunService {
     public Page<TestRunTableViewDTO> getTestRunById(Long projectId, String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<TestRun> testRuns;
-        if (query.equalsIgnoreCase("completed")) {
+
+        // Optimize query logic
+        if ("completed".equalsIgnoreCase(query)) {
             testRuns = testRunRepo.findByProjectIdAndStatus(projectId, query, pageable);
         } else {
             testRuns = testRunRepo.findByProjectId(projectId, pageable);
         }
-        return testRuns.map(testRun -> new TestRunTableViewDTO(testRun.getId(), testRun.getTestRunName(), testRun.getCreatedBy(), testRun.getTestCaseCount(), testRun.getStatus()));
+
+        return testRuns.map(testRun -> {
+            System.out.println("Query is "+query);
+            // Calculate total execution time more robustly
+            long totalExecutionTime = "completed".equalsIgnoreCase(query)
+                    ? testRunAndTestCaseRepo.findTestCasesByTestRunId(testRun.getId()).stream()
+                    .map(testRunCase -> {
+                        try {
+                            return Long.parseLong(testRunCase.getExecuteTime().split(" ")[0]);
+                        } catch (Exception e) {
+                            return 0L; // Handle invalid or null execution time gracefully
+                        }
+                    })
+                    .reduce(0L, Long::sum)
+                    : 0L;
+
+            return new TestRunTableViewDTO(
+                    testRun.getId(),
+                    testRun.getTestRunName(),
+                    testRun.getCreatedBy(),
+                    testRun.getTestCaseCount(),
+                    testRun.getStatus(),
+                    totalExecutionTime
+            );
+        });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.oniesoft.controller;
 
 import com.oniesoft.dto.TestCaseResults;
+import com.oniesoft.dto.TestCasesSummaryDTO;
 import com.oniesoft.dto.TestRunResults;
 import com.oniesoft.service.ChartService;
 import com.oniesoft.service.S3Service;
@@ -25,6 +26,11 @@ public class ChartController {
     @GetMapping("gettestcaseresults/{testRunId}")
     public TestCaseResults getTestCaseResultsByTRId(@PathVariable int testRunId) {
         return chartService.getTestCaseResultsByTRId(testRunId);
+    }
+
+    @GetMapping("getTestCaseSummary/{testCaseId}")
+    public TestCasesSummaryDTO getTestCaseSummaryFromAllRuns(@PathVariable Long testCaseId) {
+        return chartService.getTestCaseSummaryFromAllRuns(testCaseId);
     }
 
     // Retrieve a pre-signed URL for an image

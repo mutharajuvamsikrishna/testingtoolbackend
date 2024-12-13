@@ -1,9 +1,11 @@
 package com.oniesoft.serviceimpl;
 
 import com.oniesoft.dto.TestCaseResults;
+import com.oniesoft.dto.TestCasesSummaryDTO;
 import com.oniesoft.dto.TestRunResults;
 import com.oniesoft.model.TestRun;
 import com.oniesoft.model.TestRunAndCase;
+import com.oniesoft.model.TestRunAndTestCase;
 import com.oniesoft.repository.TestRunAndCaseRepo;
 import com.oniesoft.repository.TestRunAndTestCaseRepo;
 import com.oniesoft.repository.TestRunRepo;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +60,26 @@ public class ChartServiceImpl implements ChartService {
         return new TestCaseResults(totalTestCases, pass, fail, skip, featureOfPassPercent, getResultsByTestType(testRunAndTestCases));
     }
 
+    @Override
+    public TestCasesSummaryDTO getTestCaseSummaryFromAllRuns(Long testCaseId) {
+        List<TestRunAndCase> testRunAndCases = testRunAndCaseRepo.findByTestCaseId(testCaseId);
+        List<Optional<TestRunAndTestCase>> trtcs = testRunAndCases.stream().map(trc -> testRunAndTestCaseRepo.findById((int) trc.getId())).toList();
+        Map<String, Long> completedRuns = trtcs.stream()
+                .filter(trc -> trc.isPresent() && trc.get().getTestRun() != null && trc.get().getTestRun().getStatus() != null)
+                .collect(Collectors.groupingBy(
+                        trc -> trc.get().getTestRun().getStatus(),
+                        Collectors.counting()
+                ));
+        TestCasesSummaryDTO testCasesSummaryDTO = new TestCasesSummaryDTO();
+        testCasesSummaryDTO.setTotalRuns(completedRuns);
+        testCasesSummaryDTO.setTotalPassed((int) testRunAndCases.stream().filter(trc -> trc.getStatus().equalsIgnoreCase("pass")).count());
+        testCasesSummaryDTO.setTotalPassed((int) testRunAndCases.stream().filter(trc -> trc.getStatus().equalsIgnoreCase("fail")).count());
+        testCasesSummaryDTO.setTotalPassed((int) testRunAndCases.stream().filter(trc -> trc.getStatus().equalsIgnoreCase("skip")).count());
+        testCasesSummaryDTO.setExecutionTimes(testRunAndCases.stream().filter(trc -> trc.getExecuteTime() != null &&
+                !trc.getExecuteTime().equalsIgnoreCase("0 ms")).map(trc -> Long.parseLong(trc.getExecuteTime().replaceAll("[^\\d.]", ""))).collect(Collectors.toList()));
+        return testCasesSummaryDTO;
+    }
+
     private Map<String, Integer> getFeatureWisePassPercentage(List<TestRunAndCase> testRunAndTestCases) {
 
         // Group test cases by feature
@@ -87,7 +110,7 @@ public class ChartServiceImpl implements ChartService {
         // Count Pass/Fail/Skip
         return testRunAndTestCases.stream()
                 .collect(Collectors.groupingBy(
-                        TestRunAndCase::getTestType, // Group by Test Type
+                       testCase -> testCase.getTestType() != null ? testCase.getTestType() : "",
                         Collectors.groupingBy( // Group Pass/Fail/ within each case
                                 TestRunAndCase::getStatus,
                                 Collectors.counting() // Count Pass/Fail

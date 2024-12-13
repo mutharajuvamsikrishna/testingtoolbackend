@@ -1,10 +1,12 @@
 package com.oniesoft.model;
 
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Entity
+@ToString
 public class TestRunAndCase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
