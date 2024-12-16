@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -20,12 +21,13 @@ public interface RegisterRepo extends JpaRepository<Register,Integer> {
     Page<Register> findByBranchId(int id, Pageable pageable);
     List<Register> findByBranchId(int id);
     @Query("SELECT r FROM Register r WHERE "
+            + "r.branchId = :branchId AND "
             + "r.empName LIKE CONCAT('%', :query, '%') "
             + "OR r.empEmail LIKE CONCAT('%', :query, '%') "
             + "OR r.empMob LIKE CONCAT('%', :query, '%') "
             + "OR r.empRole LIKE CONCAT('%', :query, '%') "
             + "OR r.empDepartment LIKE CONCAT('%', :query, '%')")
-    List<Register> searchRegisterDetails(@Param("query") String query);
+    Page<Register> searchRegisterDetails(@Param("branchId") int branchId,@Param("query") String query,Pageable pageable);
 
 
 

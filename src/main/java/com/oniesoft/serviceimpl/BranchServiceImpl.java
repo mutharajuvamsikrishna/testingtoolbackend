@@ -27,7 +27,7 @@ public class BranchServiceImpl implements BranchService {
         if (branch1.isPresent()) {
             return branchRepo.save(branch);
         } else {
-            throw new Exception("Branch Already Exists");
+            throw new Exception("Branch Id Not Found");
         }
     }
     @Override

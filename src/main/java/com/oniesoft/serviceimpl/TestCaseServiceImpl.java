@@ -93,15 +93,15 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
 	@Override
-    public Page<TestCase> getAllTestCasesForProject(long projectId, int page, int size) {
+    public Page<TestCase> getAllTestCasesForProject(long projectId,String query, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+if(query.equalsIgnoreCase("Initial")) {
+    return testCaseRepository.findByProject_Id(projectId, pageable);
+}else {
+    return testCaseRepository.searchTestCaseDetails(projectId,query,pageable);
+}
+    }
 
-        return testCaseRepository.findByProject_Id(projectId, pageable);
-    }
-    @Override
-    public List<TestCase> searchTestCases(String query){
-        return testCaseRepository.searchTestCaseDetails(query);
-    }
 
 }

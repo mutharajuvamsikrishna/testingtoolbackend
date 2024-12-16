@@ -12,7 +12,7 @@ public interface TestCaseService {
     List<TestCase> getAllTestCases();
     void deleteTestCase(Long id);
 
-    Page<TestCase> getAllTestCasesForProject(long projectId, int page, int size);
+    Page<TestCase> getAllTestCasesForProject(long projectId,String query, int page, int size);
 
-    List<TestCase> searchTestCases(String query);
+
 }

@@ -148,8 +148,8 @@ public class TestRunServiceImpl implements TestRunService {
         Page<TestRun> testRuns;
 
         // Optimize query logic
-        if ("completed".equalsIgnoreCase(query)) {
-            testRuns = testRunRepo.findByProjectIdAndStatus(projectId, query, pageable);
+        if (!"Initial".equalsIgnoreCase(query)) {
+            testRuns = testRunRepo.searchTestRunByProjectId(projectId,query,pageable);
         } else {
             testRuns = testRunRepo.findByProjectId(projectId, pageable);
         }

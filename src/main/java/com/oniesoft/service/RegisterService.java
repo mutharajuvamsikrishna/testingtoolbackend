@@ -18,7 +18,7 @@ public interface RegisterService {
 
     Page<Register> getAllPageRegister(int page, int size);
 
-    List<Register> searchForRegister(String query);
+
 
     void deleteRegister(int id) throws Exception;
 

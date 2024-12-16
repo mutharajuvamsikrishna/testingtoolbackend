@@ -8,10 +8,12 @@ import java.util.List;
 
 public interface AdminViewService {
 
-    Page<Branch> findBranchByCmpId(int id, int page, int size);
+    Page<Branch> findBranchByCmpId(int id,String query, int page, int size);
 
 
-    List<Branch> searchBranch(String query);
 
-    Page<Register> findRegisterByBranchId(int id, int page, int size);
+
+
+
+    Page<Register> findRegisterByBranchId(int id, String query, int page, int size);
 }

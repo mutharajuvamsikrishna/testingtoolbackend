@@ -13,8 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class AdminViewServiceImpl implements AdminViewService {
     @Autowired
@@ -26,18 +24,24 @@ public class AdminViewServiceImpl implements AdminViewService {
     @Autowired
     private ProjectRepository projectRepository;
     @Override
-public Page<Branch> findBranchByCmpId(int id, int page, int size){
+public Page<Branch> findBranchByCmpId(int id,String query, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
-  return branchRepo.findByCmpId(id,pageable);
-}
-@Override
-public List<Branch> searchBranch(String query){
-        return branchRepo.searchBranchDetails(query);
+        if(query.equalsIgnoreCase("Initial")){
+            System.out.println("Yes");
+       return   branchRepo.findByCmpId(id,pageable);
+        }else {
+            System.out.println("No");
+           return branchRepo.searchBranchByCmpId(id,query,pageable);
+        }
 }
 
-@Override
-    public Page<Register> findRegisterByBranchId(int id, int page, int size){
+    @Override
+    public Page<Register> findRegisterByBranchId(int id, String query, int page, int size){
     Pageable pageable = PageRequest.of(page, size);
-        return registerRepo.findByBranchId(id,pageable);
+    if(query.equalsIgnoreCase("Initial")) {
+        return registerRepo.findByBranchId(id, pageable);
+    }else {
+        return registerRepo.searchRegisterDetails(id,query,pageable);
+    }
     }
 }

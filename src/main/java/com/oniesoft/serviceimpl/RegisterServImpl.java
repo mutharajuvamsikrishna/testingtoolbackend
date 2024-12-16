@@ -119,10 +119,7 @@ public class RegisterServImpl implements RegisterService {
         // Fetch paginated departments
         return registerRepo.findAll(pageable);
     }
-@Override
-public List<Register> searchForRegister(String query){
-    return registerRepo.searchRegisterDetails(query);
-}
+
     @Override
     public void deleteRegister(int id) throws Exception {
         if (registerRepo.existsById(id)) {

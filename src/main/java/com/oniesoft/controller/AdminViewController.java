@@ -15,16 +15,12 @@ public class AdminViewController {
     @Autowired
     private AdminViewService adminViewService;
     @GetMapping("/branchsbycmpid")
-    public Page<Branch> findBranchsByCmpId(@RequestParam int cmpId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        return adminViewService.findBranchByCmpId(cmpId,page,size);
+    public Page<Branch> findBranchsByCmpId(@RequestParam int cmpId,@RequestParam(defaultValue ="Initial") String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return adminViewService.findBranchByCmpId(cmpId,query,page,size);
     }
 
         @GetMapping("/registersbybranchId")
-    public Page<Register> findRegistersByBranchId(@RequestParam int branchId,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        return adminViewService.findRegisterByBranchId(branchId,page,size);
-    }
-    @GetMapping("/searchbranch")
-    public List<Branch> searchBranch(@RequestParam String query){
-        return adminViewService.searchBranch(query);
+    public Page<Register> findRegistersByBranchId(@RequestParam int branchId,@RequestParam(defaultValue ="Initial") String query,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return adminViewService.findRegisterByBranchId(branchId,query,page,size);
     }
 }

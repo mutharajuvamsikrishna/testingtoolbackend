@@ -45,16 +45,14 @@ public class TestCaseController {
     @GetMapping("/getForProject")
     public ResponseEntity<Page<TestCase>> getTestCaseForProject(
             @RequestParam Long id,
+            @RequestParam(defaultValue = "Initial") String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<TestCase> testCases = testCaseService.getAllTestCasesForProject(id, page, size);
+        Page<TestCase> testCases = testCaseService.getAllTestCasesForProject(id,query, page, size);
         return ResponseEntity.ok(testCases);
     }
 
-    @GetMapping("/searchtestcase")
-    public List<TestCase> searchTestCase(@RequestParam String query) {
-        return testCaseService.searchTestCases(query);
-    }
+
 
     @GetMapping("/getAll")
     public ResponseEntity<List<TestCase>> getAllTestCases() {
