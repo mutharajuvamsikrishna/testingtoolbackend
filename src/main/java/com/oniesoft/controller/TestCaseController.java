@@ -1,6 +1,8 @@
 package com.oniesoft.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,10 +32,17 @@ public class TestCaseController {
 
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<TestCase> updateTestCase(@RequestBody TestCase testCase) {
-        TestCase updatedTestCase = testCaseService.updateTestCase(testCase);
-        return ResponseEntity.ok(updatedTestCase);
+    @PutMapping("/update/{projectId}")
+    public ResponseEntity<?> updateTestCase( @PathVariable Long projectId,@RequestBody TestCase testCase){
+
+        TestCase savedTestCase;
+        try {
+            savedTestCase = testCaseService.updateTestCase(projectId,testCase);
+            return ResponseEntity.ok(savedTestCase);
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/{id}")

@@ -19,6 +19,7 @@ public interface TestCaseRepository extends JpaRepository<TestCase, Long> {
     Page<TestCase> findByProject_Id(long projectId, Pageable pageable);
 
     TestCase findByProjectIdAndAutomationId(long projectId, String automationId);
+    boolean existsByProjectIdAndAutomationId(long projectId, String automationId);
     TestCase findByAutomationId(String autoId);
     @Query("SELECT t FROM TestCase t WHERE "
             + "t.project = :projectId AND "
