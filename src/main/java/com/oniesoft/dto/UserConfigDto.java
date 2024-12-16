@@ -32,10 +32,10 @@ public class UserConfigDto {
     private String ipAddress;
     private String projectPath;
 
-    public UserConfigDto(long id, String url,String projectName, boolean basicAuth, String basicAuthUser, String basicAuthPassword, boolean enableLiveReporting, String elasticSearchURL, boolean notifyTeams, int notifyBlockerCount, int notifyCriticalCount, int notifyMajorCount, boolean sendEmailReport, String emailReportTo, String jiraUserName, String jiraPassword, String jiraURL, String jiraProjectKey, String ipAddress, String projectPath) {
+    public UserConfigDto(long id, String url, String projectName, boolean basicAuth, String basicAuthUser, String basicAuthPassword, boolean enableLiveReporting, String elasticSearchURL, boolean notifyTeams, int notifyBlockerCount, int notifyCriticalCount, int notifyMajorCount, boolean sendEmailReport, String emailReportTo, String jiraUserName, String jiraPassword, String jiraURL, String jiraProjectKey, String ipAddress, String projectPath) {
         this.id = id;
         this.url = url;
-        this.projectName=projectName;
+        this.projectName = projectName;
         this.basicAuth = basicAuth;
         this.basicAuthUser = basicAuthUser;
         this.basicAuthPassword = basicAuthPassword;

@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +18,6 @@ public interface UserConfigRepo extends JpaRepository<UserConfig,Integer> {
     UserConfig findByUserIdAndProjectId(int userId, Long projectId);
 
     Page<UserConfig> findByUserId(int userId, Pageable pageable);
+
+    void deleteByUserIdAndProjectId(int registerId, Long projectId);
 }

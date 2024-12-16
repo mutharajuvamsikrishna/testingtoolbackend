@@ -3,11 +3,16 @@ package com.oniesoft.serviceimpl;
 import com.oniesoft.dto.ProjectDTO;
 import com.oniesoft.dto.ProjectUserReq;
 import com.oniesoft.exception.ResourceNotFoundException;
-import com.oniesoft.model.*;
+import com.oniesoft.model.Project;
+import com.oniesoft.model.ProjectUsers;
+import com.oniesoft.model.Register;
+import com.oniesoft.model.UserConfig;
 import com.oniesoft.repository.ProjectRepository;
 import com.oniesoft.repository.ProjectUsersRepo;
 import com.oniesoft.repository.RegisterRepo;
+import com.oniesoft.repository.UserConfigRepo;
 import com.oniesoft.service.AssignProjectsService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,8 @@ public class AssignProjectsImpl implements AssignProjectsService {
     private ProjectUsersRepo projectUsersRepo;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private UserConfigRepo userConfigRepo;
 
     @Override
     public List<ProjectUsers> assignProjects(ProjectUserReq projectUserReq) {
@@ -30,19 +37,22 @@ public class AssignProjectsImpl implements AssignProjectsService {
         Project project = projectRepository.findById(projectUserReq.getProjectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with ID: " + projectUserReq.getProjectId()));
         List<ProjectUsers> ele=new ArrayList<>();
-        // Link each TestCase to the existing TestRun
+        // Link each Project to the existing User
         for (int registerId : projectUserReq.getRegisterIds()) {
             Register register = registerRepo.findById(registerId)
                     .orElseThrow(() -> new ResourceNotFoundException("Register not found with ID: " + registerId));
 
-            // Create a new TestRunAndTestCase link
+            // Create a new Project Users link
             ProjectUsers link = new ProjectUsers();
             link.setProject(project);
             link.setRegister(register);
             ele.add(link);
-            // Save the link in the TestRunAndTestCase repository
+            // Save the link in the project users repository
             projectUsersRepo.save(link);
-
+            UserConfig userConfig=new UserConfig();
+            userConfig.setProjectId(project.getId());
+            userConfig.setUserId(registerId);
+            userConfigRepo.save(userConfig);
         }
 
         return ele;
@@ -66,6 +76,10 @@ public class AssignProjectsImpl implements AssignProjectsService {
             // Save the link in the TestRunAndTestCase repository
             projectUsersRepo.save(link);
 
+            UserConfig userConfig=new UserConfig();
+            userConfig.setProjectId(projectId);
+            userConfig.setUserId(register.getId());
+            userConfigRepo.save(userConfig);
         }
 
         return ele;
@@ -119,9 +133,12 @@ public List<ProjectDTO> getAllUnMappedRegisters(int registerId, int branchId) {
 
     return unMappedProjects;
 }
+
+@Transactional
 @Override
     public String removeUserFromProject(int registerId, Long projectId) {
         projectUsersRepo.deleteByRegisterIdAndProjectId(registerId, projectId);
+        userConfigRepo.deleteByUserIdAndProjectId(registerId, projectId);
         return  "DeletedSuccessFully";
     }
 

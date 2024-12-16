@@ -2,8 +2,9 @@ package com.oniesoft.controller;
 
 import com.oniesoft.dto.ProjectDTO;
 import com.oniesoft.dto.ProjectUserReq;
-
-import com.oniesoft.model.*;
+import com.oniesoft.model.Project;
+import com.oniesoft.model.ProjectUsers;
+import com.oniesoft.model.Register;
 import com.oniesoft.service.AssignProjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,12 @@ import java.util.List;
 public class AssignProjectController {
     @Autowired
     private AssignProjectsService assignProjectsService;
+
     @PostMapping("/assignproject")
     public ResponseEntity<?> assignProjectstoUser(@RequestBody ProjectUserReq projectUserReq) {
         try {
             // Call the service method to assign projects
             List<ProjectUsers> ele = assignProjectsService.assignProjects(projectUserReq);
-
             // Return success response
             return ResponseEntity.ok(ele);
         } catch (Exception e) {
