@@ -34,8 +34,8 @@ public class ChartServiceImpl implements ChartService {
         // Count the statuses using Java Streams
         int totalTestRuns = testRuns.size();
         int newStatusWithTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus())) && testRun.getTestCaseCount() > 0).count();
-        int newStatusWithOutTestCases = (int) testRuns.stream().filter(testRun -> ("New".equalsIgnoreCase(testRun.getStatus())) && testRun.getTestCaseCount() == 0).count();
-        int inProgressStatus = (int) testRuns.stream().filter(testRun -> "InProgress".equalsIgnoreCase(testRun.getStatus())).count();
+        int newStatusWithOutTestCases = (int) testRuns.stream().filter(testRun -> (testRun.getTestCaseCount() == 0)).count();
+        int inProgressStatus = (int) testRuns.stream().filter(testRun -> "In Progress".equalsIgnoreCase(testRun.getStatus())).count();
         int completed = (int) testRuns.stream().filter(testRun -> "Completed".equalsIgnoreCase(testRun.getStatus())).count();
         int scheduled = (int) testRuns.stream().filter(testRun -> "Scheduled".equalsIgnoreCase(testRun.getStatus())).count();
 
