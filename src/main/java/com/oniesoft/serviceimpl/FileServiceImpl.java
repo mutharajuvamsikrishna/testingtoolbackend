@@ -2,18 +2,22 @@ package com.oniesoft.serviceimpl;
 
 import com.oniesoft.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Service
-class FileServiceImpl {
+public class FileServiceImpl {
 
     @Autowired
     S3Service s3Service;
@@ -42,7 +46,33 @@ class FileServiceImpl {
 //        s3Service.uploadFile(hashString.toString(), new File(filePath));
 //        this.deleteImage(filePath);
 //        return hashString.toString();
-        return filePath;
+        return fileName;
+    }
+
+    public ResponseEntity<Resource> getFilePath(String fileName){
+        try {
+            // Resolve the image path
+            Path imagePath = Paths.get(uploadDir, "images", fileName);
+
+            // Check if the file exists
+            if (!Files.exists(imagePath)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            // Load the resource
+            Resource resource = new UrlResource(imagePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_PNG)
+                        .cacheControl(CacheControl.noCache())
+                        .body(resource);
+            } else {
+                System.out.println("Resource is not readable: " + imagePath.toString());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     private void deleteImage(String filePath) throws IOException {

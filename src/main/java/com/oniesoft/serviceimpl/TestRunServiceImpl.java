@@ -318,7 +318,9 @@ public class TestRunServiceImpl implements TestRunService {
                 existingTestRunAndCase.setTestType(testResultDto.getTestType());
                 String path = "";
                 try {
-                    path = fileService.saveFile(testResultDto.getImage());
+                    if (!Objects.equals(testResultDto.getImage(), "")) {
+                        path = fileService.saveFile(testResultDto.getImage());
+                    }
 
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -327,13 +329,13 @@ public class TestRunServiceImpl implements TestRunService {
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()
-                        .allMatch(tc -> "New".equalsIgnoreCase(tc.getStatus()));
+                        .allMatch(tc -> List.of("Pass", "Fail", "Skip").contains(tc.getStatus()));
                 boolean anyInProgress = testRunAndCases.stream()
-                        .anyMatch(tc -> "New".equalsIgnoreCase(tc.getStatus()));
+                        .anyMatch(tc -> "In Progress".equalsIgnoreCase(tc.getStatus()));
 
-                if (!allComplete) {
+                if (allComplete) {
                     testRun.setStatus("Completed");
-                } else if (!anyInProgress) {
+                } else if (anyInProgress) {
                     testRun.setStatus("In Progress");
                 }
 
