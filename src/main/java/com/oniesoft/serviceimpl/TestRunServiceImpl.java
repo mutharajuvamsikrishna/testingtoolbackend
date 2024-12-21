@@ -265,7 +265,9 @@ public class TestRunServiceImpl implements TestRunService {
         String ipAddress = userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
         String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath, ipAddress, testRun.getProjectId());
-
+        if(serviceResponse.equalsIgnoreCase("java.lang.IllegalArgumentException")){
+            throw new Exception("java.lang.IllegalArgumentException");
+        }
         return "Test cases integration " + ". Service response: " + serviceResponse;
     }
 

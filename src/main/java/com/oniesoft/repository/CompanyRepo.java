@@ -10,5 +10,7 @@ public interface CompanyRepo extends JpaRepository<Company,Integer> {
 
 
 
-    Optional<Company> findByCmpNameAndCmpId(String cmpName, String cmpId);
+
+
+    Optional<Company> findByCmpNameOrCmpId(String cmpName, String cmpId);
 }

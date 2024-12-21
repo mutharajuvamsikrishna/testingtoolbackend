@@ -3,6 +3,7 @@ package com.oniesoft.serviceimpl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.TestRunAndCase;
 import com.oniesoft.repository.TestRunAndCaseRepo;
 import jakarta.transaction.Transactional;
@@ -51,33 +52,45 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     @Transactional
     public TestCase updateTestCase(Long projectId, TestCase testCase) throws Exception {
-        boolean flag = testCaseRepository.existsByProjectIdAndAutomationId(projectId, testCase.getAutomationId());
-        if (!flag) {
-            TestCase existingTestCase = testCaseRepository.findById(testCase.getId())
-                    .orElseThrow(() -> new Exception("TestCase not found with ID: " + testCase.getId()));
+        TestCase existingTestCase = testCaseRepository.findById(testCase.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("TestCase not found with ID: " + testCase.getId()));
 
-            existingTestCase.setTestCaseName(testCase.getTestCaseName());
-            existingTestCase.setAuthor(testCase.getAuthor());
-            existingTestCase.setAutomationId(testCase.getAutomationId());
-            existingTestCase.setFeature(testCase.getFeature());
-            existingTestCase.setUpdatedAt(LocalDateTime.now());
+        // Update basic fields
+        existingTestCase.setTestCaseName(testCase.getTestCaseName());
+        existingTestCase.setAuthor(testCase.getAuthor());
+        existingTestCase.setFeature(testCase.getFeature());
+        existingTestCase.setUpdatedAt(LocalDateTime.now());
 
-            // Update related entities
-            List<TestRunAndCase> testRunAndCases = testRunAndCaseRepo.findByTestCaseId(testCase.getId());
-            for (TestRunAndCase testRunAndCase : testRunAndCases) {
-                testRunAndCase.setTestCaseName(testCase.getTestCaseName());
-                testRunAndCase.setAuthor(testCase.getAuthor());
-                testRunAndCase.setAutomationId(testCase.getAutomationId());
-                testRunAndCase.setFeature(testCase.getFeature());
-                testRunAndCase.setUpdatedAt(testCase.getUpdatedAt());
-                testRunAndCaseRepo.save(testRunAndCase);
+        // Update Automation ID if needed
+        updateAutomationId(existingTestCase, testCase, projectId);
+
+        // Update related TestRunAndCase entries
+        List<TestRunAndCase> testRunAndCases = testRunAndCaseRepo.findByTestCaseId(testCase.getId());
+        for (TestRunAndCase testRunAndCase : testRunAndCases) {
+            testRunAndCase.setTestCaseName(testCase.getTestCaseName());
+            testRunAndCase.setAuthor(testCase.getAuthor());
+            testRunAndCase.setAutomationId(testCase.getAutomationId());
+            testRunAndCase.setFeature(testCase.getFeature());
+            testRunAndCase.setUpdatedAt(testCase.getUpdatedAt());
+        }
+
+        // Batch save related TestRunAndCase entities
+        testRunAndCaseRepo.saveAll(testRunAndCases);
+
+        // Save and return the updated TestCase
+        return testCaseRepository.save(existingTestCase);
+    }
+
+    private void updateAutomationId(TestCase existingTestCase, TestCase newTestCase, Long projectId) throws Exception {
+        if (!existingTestCase.getAutomationId().equals(newTestCase.getAutomationId())) {
+            boolean exists = testCaseRepository.existsByProjectIdAndAutomationId(projectId, newTestCase.getAutomationId());
+            if (exists) {
+                throw new Exception("Automation Id Already In Use");
             }
-
-            return testCaseRepository.save(existingTestCase);
-        } else {
-            throw new Exception("Automation Id Already In Use");
+            existingTestCase.setAutomationId(newTestCase.getAutomationId());
         }
     }
+
 
 
     @Override
