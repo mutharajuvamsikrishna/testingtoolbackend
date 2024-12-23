@@ -25,6 +25,6 @@ public class AdminViewController {
     }
     @GetMapping("/users-by-branch-role")
     public Page<Register> findUsersByBranchIdAndRole(@RequestParam int branchId,@RequestParam(defaultValue ="Initial") String query,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        return adminViewService.findAdminByBranchIdAndRole(branchId,query,page,size);
+        return adminViewService.findUsersByBranchIdAndRole(branchId,query,page,size);
     }
 }

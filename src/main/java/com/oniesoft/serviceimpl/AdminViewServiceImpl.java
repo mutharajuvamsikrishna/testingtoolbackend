@@ -37,22 +37,24 @@ public Page<Branch> findBranchByCmpId(int id,String query, int page, int size){
 
     @Override
     public Page<Register> findAdminByBranchIdAndRole(int id, String query, int page, int size){
+        String empRole="Admin";
     Pageable pageable = PageRequest.of(page, size);
     if(query.equalsIgnoreCase("Initial")) {
-        return registerRepo.findByBranchId(id, pageable);
+        return registerRepo.findByBranchIdAndEmpRole(id,empRole, pageable);
     }else {
-        String empRole="Admin";
-        return registerRepo.searchRegisterDetails(id,query,empRole,pageable);
+
+        return registerRepo.searchRegisterDetails(id,empRole,query,pageable);
     }
     }
     @Override
     public Page<Register> findUsersByBranchIdAndRole(int id, String query, int page, int size){
+        String empRole="User";
         Pageable pageable = PageRequest.of(page, size);
         if(query.equalsIgnoreCase("Initial")) {
-            return registerRepo.findByBranchId(id, pageable);
+            return registerRepo.findByBranchIdAndEmpRole(id,empRole, pageable);
         }else {
-            String empRole="User";
-            return registerRepo.searchRegisterDetails(id,query,empRole,pageable);
+       ;
+            return registerRepo.searchRegisterDetails(id,empRole,query,pageable);
         }
     }
 
