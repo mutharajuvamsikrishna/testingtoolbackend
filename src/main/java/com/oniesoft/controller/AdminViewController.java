@@ -19,8 +19,12 @@ public class AdminViewController {
         return adminViewService.findBranchByCmpId(cmpId,query,page,size);
     }
 
-        @GetMapping("/registersbybranchId")
-    public Page<Register> findRegistersByBranchId(@RequestParam int branchId,@RequestParam(defaultValue ="Initial") String query,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        return adminViewService.findRegisterByBranchId(branchId,query,page,size);
+        @GetMapping("/admins-by-branch-role")
+    public Page<Register> findAdminsByBranchIdAndRole(@RequestParam int branchId,@RequestParam(defaultValue ="Initial") String query,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return adminViewService.findAdminByBranchIdAndRole(branchId,query,page,size);
+    }
+    @GetMapping("/users-by-branch-role")
+    public Page<Register> findUsersByBranchIdAndRole(@RequestParam int branchId,@RequestParam(defaultValue ="Initial") String query,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return adminViewService.findAdminByBranchIdAndRole(branchId,query,page,size);
     }
 }

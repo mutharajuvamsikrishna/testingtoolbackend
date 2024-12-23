@@ -74,6 +74,7 @@ public class TestRunController {
             String response = testRunService.integrateTestCasesWithTestingTool(testRunId);
             return ResponseEntity.ok(response); // Return successful response
         } catch (Exception e) {
+
             // Handle any exceptions by returning an appropriate error message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }

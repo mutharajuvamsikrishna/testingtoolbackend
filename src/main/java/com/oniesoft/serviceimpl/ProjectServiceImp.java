@@ -23,28 +23,7 @@ public class ProjectServiceImp implements ProjectService {
 
     @Override
     public Project createProject(Project project) {
-        project.setCreatedAt(LocalDateTime.now());
-        project.setUpdatedAt(LocalDateTime.now());
-        project.setBasicAuth(false);
-        // REPORT CONFIGURATIONS
-        project.setEnableLiveReporting(true);
-        boolean overrideReport;
-        // TEAMS NOTIFICATION
 
-        project.setNotifyTeams(false);
-        boolean notifyTeams;
-
-        project.setNotifyBlockerCount(0);
-
-        project.setNotifyCriticalCount(0);
-
-        project.setNotifyMajorCount(0);
-
-        // EMAIL NOTIFICATION
-
-        project.setSendEmailReport(false);
-
-        // JIRA CONFIGURATIONS
 
         return projectRepository.save(project);
 

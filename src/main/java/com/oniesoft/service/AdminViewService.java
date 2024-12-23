@@ -15,5 +15,9 @@ public interface AdminViewService {
 
 
 
-    Page<Register> findRegisterByBranchId(int id, String query, int page, int size);
+
+
+    Page<Register> findAdminByBranchIdAndRole(int id, String query, int page, int size);
+
+    Page<Register> findUsersByBranchIdAndRole(int id, String query, int page, int size);
 }

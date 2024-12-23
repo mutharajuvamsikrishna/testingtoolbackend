@@ -22,12 +22,13 @@ public interface RegisterRepo extends JpaRepository<Register,Integer> {
     List<Register> findByBranchId(int id);
     @Query("SELECT r FROM Register r WHERE "
             + "r.branchId = :branchId AND "
+            + "r.empRole = :empRole AND "
             + "r.empName LIKE CONCAT('%', :query, '%') "
             + "OR r.empEmail LIKE CONCAT('%', :query, '%') "
             + "OR r.empMob LIKE CONCAT('%', :query, '%') "
             + "OR r.empRole LIKE CONCAT('%', :query, '%') "
             + "OR r.empDepartment LIKE CONCAT('%', :query, '%')")
-    Page<Register> searchRegisterDetails(@Param("branchId") int branchId,@Param("query") String query,Pageable pageable);
+    Page<Register> searchRegisterDetails(@Param("branchId") int branchId,@Param("empRole") String empRole, @Param("query") String query,Pageable pageable);
 
 
 

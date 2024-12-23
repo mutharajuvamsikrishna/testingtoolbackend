@@ -155,7 +155,7 @@ public class TestRunServiceImpl implements TestRunService {
         }
 
         return testRuns.map(testRun -> {
-            System.out.println("Query is " + query);
+
             // Calculate total execution time more robustly
             long totalExecutionTime = "completed".equalsIgnoreCase(query)
                     ? testRunAndTestCaseRepo.findTestCasesByTestRunId(testRun.getId()).stream()
@@ -265,10 +265,11 @@ public class TestRunServiceImpl implements TestRunService {
         String ipAddress = userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
         String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath, ipAddress, testRun.getProjectId());
-//        if(serviceResponse.equalsIgnoreCase("java.lang.IllegalArgumentException")){
-//            throw new Exception("java.lang.IllegalArgumentException");
-//        }
-        System.out.println(serviceResponse);
+             System.out.println(serviceResponse);
+
+        if (!serviceResponse.trim().equals("Test execution started.".trim())) {
+            throw new IllegalArgumentException("Service response does not match the expected message.");
+        }
         return "Test cases integration " + ". Service response: " + serviceResponse;
     }
 

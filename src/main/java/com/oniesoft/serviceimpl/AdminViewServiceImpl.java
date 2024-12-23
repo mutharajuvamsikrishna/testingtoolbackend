@@ -27,21 +27,33 @@ public class AdminViewServiceImpl implements AdminViewService {
 public Page<Branch> findBranchByCmpId(int id,String query, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
         if(query.equalsIgnoreCase("Initial")){
-            System.out.println("Yes");
+
        return   branchRepo.findByCmpId(id,pageable);
         }else {
-            System.out.println("No");
+
            return branchRepo.searchBranchByCmpId(id,query,pageable);
         }
 }
 
     @Override
-    public Page<Register> findRegisterByBranchId(int id, String query, int page, int size){
+    public Page<Register> findAdminByBranchIdAndRole(int id, String query, int page, int size){
     Pageable pageable = PageRequest.of(page, size);
     if(query.equalsIgnoreCase("Initial")) {
         return registerRepo.findByBranchId(id, pageable);
     }else {
-        return registerRepo.searchRegisterDetails(id,query,pageable);
+        String empRole="Admin";
+        return registerRepo.searchRegisterDetails(id,query,empRole,pageable);
     }
     }
+    @Override
+    public Page<Register> findUsersByBranchIdAndRole(int id, String query, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        if(query.equalsIgnoreCase("Initial")) {
+            return registerRepo.findByBranchId(id, pageable);
+        }else {
+            String empRole="User";
+            return registerRepo.searchRegisterDetails(id,query,empRole,pageable);
+        }
+    }
+
 }
