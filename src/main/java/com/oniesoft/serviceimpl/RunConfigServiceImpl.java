@@ -38,9 +38,12 @@ public class RunConfigServiceImpl implements RunConfigService {
     @Override
     public RunConfig updateRunConfig(RunConfig runConfig) throws Exception {
         Optional<RunConfig> runConfig1 = runConfigRepo.findById(runConfig.getId());
+
         if (runConfig1.isPresent()) {
-            if(runConfig1.get().isScheduleExecution()){
-                TestRun testRun=testRunRepo.findById(runConfig1.get().getId()).get();
+            if(runConfig.isScheduleExecution()){
+
+                TestRun testRun=testRunRepo.findById(runConfig1.get().getTestRunId()).get();
+                System.out.println(testRun);
                 testRun.setStatus("Scheduled");
                 testRunRepo.save(testRun);
             }
