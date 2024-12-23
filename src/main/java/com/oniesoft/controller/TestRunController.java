@@ -1,6 +1,7 @@
 package com.oniesoft.controller;
 
 import com.oniesoft.dto.*;
+import com.oniesoft.exception.ResourceNotFoundException;
 import com.oniesoft.model.*;
 
 import com.oniesoft.service.TestRunService;
@@ -73,10 +74,18 @@ public class TestRunController {
             // Call the service method to integrate test cases with the testing tool
             String response = testRunService.integrateTestCasesWithTestingTool(testRunId);
             return ResponseEntity.ok(response); // Return successful response
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
 
             // Handle any exceptions by returning an appropriate error message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }catch (ResourceNotFoundException e) {
+
+            // Handle any exceptions by returning an appropriate error message
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Error occurred: " + e.getMessage());
+        }catch (Exception e) {
+
+            // Handle any exceptions by returning an appropriate error message
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred: " + e.getMessage());
         }
     }
 

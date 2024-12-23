@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -256,11 +257,11 @@ public class TestRunServiceImpl implements TestRunService {
         // Step 4: Fetch Project Details
         Optional<UserConfig> userConfig = userConfigRepo.findByProjectId(testRun.getProjectId());
         if (userConfig.isEmpty() || userConfig.get().getProjectPath() == null) {
-            throw new Exception("Project Directory Not Found for project ID: " + testRun.getProjectId());
+            throw new ResourceNotFoundException("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
         String projectPath = userConfig.get().getProjectPath();
         if (userConfig.get().getIpAddress() == null) {
-            throw new Exception("Project IpAddress Not Found for project ID: " + testRun.getProjectId());
+            throw new ResourceNotFoundException("Project IpAddress Not Found for project ID: " + testRun.getProjectId());
         }
         String ipAddress = userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
@@ -268,7 +269,7 @@ public class TestRunServiceImpl implements TestRunService {
              System.out.println(serviceResponse);
 
         if (!serviceResponse.trim().equals("Test execution started.".trim())) {
-            throw new IllegalArgumentException("Service response does not match the expected message.");
+            throw new IllegalStateException("Service response does not match the expected message.");
         }
         return "Test cases integration " + ". Service response: " + serviceResponse;
     }
