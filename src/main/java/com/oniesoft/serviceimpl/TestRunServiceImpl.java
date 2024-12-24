@@ -367,6 +367,7 @@ public class TestRunServiceImpl implements TestRunService {
         TestRun testRunNew = new TestRun();
         testRunNew.setTestRunName(testRunName.get("testRunName"));
         testRunNew.setCreatedBy(testRunOld.get().getCreatedBy());
+        testRunNew.setUserId(testRunOld.get().getUserId());
         testRunNew.setProjectId(testRunOld.get().getProjectId());
         TestRun testRun = this.createTestRun(testRunNew);
         List<String> caseIds = testCasesByTestRunId.stream().map(TestRunAndCase::getAutomationId).toList();
