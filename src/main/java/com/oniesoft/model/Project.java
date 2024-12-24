@@ -234,8 +234,8 @@ public class Project {
         return apiBaseURL;
     }
 
-    public void setApiBaseURL() {
-        this.apiBaseURL = apiBaseURL;
+    public void setApiBaseURL(String apiBaseURL) {
+        this.apiBaseURL = this.apiBaseURL;
     }
 
     @Override
