@@ -20,14 +20,14 @@ public interface TestCaseRepository extends JpaRepository<TestCase, Long> {
 
     TestCase findByProjectIdAndAutomationId(long projectId, String automationId);
     boolean existsByProjectIdAndAutomationId(long projectId, String automationId);
-    TestCase findByAutomationId(String autoId);
+
     @Query("SELECT t FROM TestCase t WHERE "
-            + "t.project = :projectId AND "
-            + "t.testCaseName LIKE CONCAT('%', :query, '%') "
+            + "t.project.id = :projectId AND "
+            + "(t.testCaseName LIKE CONCAT('%', :query, '%') "
             + "OR t.author LIKE CONCAT('%', :query, '%') "
             + "OR t.automationId LIKE CONCAT('%', :query, '%') "
-            + "OR t.feature LIKE CONCAT('%', :query, '%') ")
-    Page<TestCase> searchTestCaseDetails(@Param("projectId") Long projectId,@Param("query") String query,Pageable pageable);
+            + "OR t.feature LIKE CONCAT('%', :query, '%'))")
+    Page<TestCase> searchTestCaseDetails(@Param("projectId") Long projectId, @Param("query") String query, Pageable pageable);
 
 
 }
