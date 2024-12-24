@@ -93,7 +93,7 @@ public class TestRunController {
     public ResponseEntity<?> addTestResults(@RequestBody TestResultDto testResultDto) {
         try {
             TestRunAndCase testRunAndCase = testRunService.testResultsAdd(testResultDto);
-            System.out.println("Test case updated: " + testRunAndCase);
+
             return ResponseEntity.ok(testRunAndCase);
         } catch (Exception e) {
             System.err.println("Failed to update test case: " + e.getMessage());

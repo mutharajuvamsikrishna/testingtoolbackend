@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByBranchId(int branchId);
-//    @Query("SELECT p FROM Project p WHERE "
-//            + "p.projectName LIKE CONCAT('%', :query, '%') ")
-//    List<Project> searchProjectDetails(@Param("query") String query);
+
+    boolean existsProjectByProjectNameAndBranchId(String projectName, int branchId);
+
 }

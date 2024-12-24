@@ -38,7 +38,7 @@ public class LoginController {
         if (authentication.isAuthenticated()) {
             Register userRole = registerRepo.findByEmpEmail(email);
                  if(!userRole.isStatus()){
-                     System.out.println("Ok");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
                  }
             final String jwt = jwtService.generateToken(authRequest.getEmpEmail());

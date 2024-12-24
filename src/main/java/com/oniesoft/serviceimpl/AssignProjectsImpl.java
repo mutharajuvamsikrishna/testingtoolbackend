@@ -103,7 +103,7 @@ public class AssignProjectsImpl implements AssignProjectsService {
         List<Integer> registerIds = projectUsersRepo.findRegisterIdsByProjectId(projectId);
 
         // Get all TestCase entities from the repository
-        System.out.println(branchId);
+
         List<Register> registers = registerRepo.findByBranchId(branchId);
 
         // Filter the TestCase list to exclude those already associated with the testRunId

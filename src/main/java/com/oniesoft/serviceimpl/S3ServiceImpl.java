@@ -29,7 +29,7 @@ public class S3ServiceImpl implements S3Service {
                     .build();
 
             s3Client.putObject(request, file.toPath());
-            System.out.println("File uploaded to S3 successfully!");
+//            System.out.println("File uploaded to S3 successfully!");
         } catch (S3Exception e) {
             throw new RuntimeException("Error uploading file to S3: " + e.awsErrorDetails().errorMessage(), e);
         } catch (Exception e) {

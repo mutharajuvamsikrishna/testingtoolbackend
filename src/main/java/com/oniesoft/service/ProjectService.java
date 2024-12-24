@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 
 public interface ProjectService {
  
-	public Project  createProject(Project project);
-	public Project  updateProject(Project project);
+	public Project  createProject(Project project) throws Exception;
+	public Project  updateProject(Project project) throws Exception;
 	public Project getProject(long id);
 
 	List<Project> getProjectsByBranchId(int branchId);

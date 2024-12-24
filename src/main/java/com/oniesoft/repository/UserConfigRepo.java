@@ -15,9 +15,14 @@ public interface UserConfigRepo extends JpaRepository<UserConfig,Integer> {
 
  
 
-    UserConfig findByUserIdAndProjectId(int userId, Long projectId);
+  
 
     Page<UserConfig> findByUserId(int userId, Pageable pageable);
 
     void deleteByUserIdAndProjectId(int registerId, Long projectId);
+    
+
+    UserConfig findByUserIdAndProjectId(int userId, long projectId);
+
+    Optional<UserConfig> findByProjectIdAndUserId(Long projectId, int userId);
 }

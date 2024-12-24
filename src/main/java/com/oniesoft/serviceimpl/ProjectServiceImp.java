@@ -2,8 +2,10 @@ package com.oniesoft.serviceimpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
+import com.oniesoft.model.TestCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,21 +24,38 @@ public class ProjectServiceImp implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-    public Project createProject(Project project) {
-
-
-        return projectRepository.save(project);
+    public Project createProject(Project project) throws Exception {
+boolean flag=projectRepository.existsProjectByProjectNameAndBranchId(project.getProjectName(),project.getBranchId());
+if(!flag) {
+    return projectRepository.save(project);
+}else{
+    throw new Exception("Project Name Already Exists");
+}
 
     }
 
     @Override
-    public Project updateProject(Project project) {
+    public Project updateProject(Project project) throws Exception {
+        Optional<Project> projectOptional = projectRepository.findById(project.getId());
+        if (projectOptional.isPresent()) {
+            Project existingProject = projectOptional.get();
+            updateProjectName(existingProject, project);
 
-        Project updateProject = projectRepository.findById(project.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + project.getId()));
-        project.setUpdatedAt(updateProject.getUpdatedAt());
-        return projectRepository.save(project);
+            // Save the updated existingProject (not the input project)
+            return projectRepository.save(existingProject);
+        } else {
+            throw new ResourceNotFoundException("Project Id Not Found: " + project.getId());
+        }
+    }
 
+    private void updateProjectName(Project existingProject, Project newProject) throws Exception {
+        if (!existingProject.getProjectName().equals(newProject.getProjectName())) {
+            boolean exists = projectRepository.existsProjectByProjectNameAndBranchId(newProject.getProjectName(), newProject.getBranchId());
+            if (exists) {
+                throw new ResourceNotFoundException("Project name is already in use for the given branch.");
+            }
+            existingProject.setProjectName(newProject.getProjectName());
+        }
     }
 
     @Override

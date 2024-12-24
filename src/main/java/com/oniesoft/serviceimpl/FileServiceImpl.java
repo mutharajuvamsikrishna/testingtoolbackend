@@ -67,7 +67,7 @@ public class FileServiceImpl {
                         .cacheControl(CacheControl.noCache())
                         .body(resource);
             } else {
-                System.out.println("Resource is not readable: " + imagePath.toString());
+//                System.out.println("Resource is not readable: " + imagePath.toString());
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         } catch (Exception e) {

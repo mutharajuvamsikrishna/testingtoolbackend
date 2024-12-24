@@ -60,9 +60,7 @@ public interface TestRunService {
     EditTestRunTestCasesDTO getAllUnMappedTestCases(int testRunId, long projectid, Pageable pageable);
 
 
-
     String integrateTestCasesWithTestingTool(int testRunId) throws Exception;
-
 
     TestRunAndCase testResultsAdd(TestResultDto testResultDto) throws Exception;
 

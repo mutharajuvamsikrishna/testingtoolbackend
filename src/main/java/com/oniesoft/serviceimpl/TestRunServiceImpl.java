@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -245,6 +244,8 @@ public class TestRunServiceImpl implements TestRunService {
 
         // Step 2: Fetch Associated Test Cases
         List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testRunId);
+
+
         if (testRunAndCases.isEmpty()) {
             testRun.setStatus("No test cases found");
             testRunRepo.save(testRun);
@@ -255,7 +256,7 @@ public class TestRunServiceImpl implements TestRunService {
         String automationIds = testRunAndCases.stream().map(testCase -> String.valueOf(testCase.getAutomationId())).collect(Collectors.joining(","));
 
         // Step 4: Fetch Project Details
-        Optional<UserConfig> userConfig = userConfigRepo.findByProjectId(testRun.getProjectId());
+        Optional<UserConfig> userConfig = userConfigRepo.findByProjectIdAndUserId(testRun.getProjectId(),testRun.getUserId());
         if (userConfig.isEmpty() || userConfig.get().getProjectPath() == null) {
             throw new ResourceNotFoundException("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
@@ -266,7 +267,7 @@ public class TestRunServiceImpl implements TestRunService {
         String ipAddress = userConfig.get().getIpAddress();
         // Step 5: Send Payload to Windows Service
         String serviceResponse = sendPayloadToWindowsService(testRunId, automationIds, projectPath, ipAddress, testRun.getProjectId());
-             System.out.println(serviceResponse);
+
 
         if (!serviceResponse.trim().equals("Test execution started.".trim())) {
             throw new IllegalStateException("Service response does not match the expected message.");

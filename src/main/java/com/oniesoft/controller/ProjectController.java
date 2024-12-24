@@ -13,7 +13,7 @@ import com.oniesoft.model.Project;
 import com.oniesoft.serviceimpl.ProjectServiceImp;
 
 import lombok.Delegate;
-
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 
 @RestController
@@ -26,18 +26,26 @@ public class ProjectController {
 	
 	
 	@PostMapping("/save")
-	public ResponseEntity<Project> createProject(@RequestBody Project project){
-		
-		Project savedProject=projectService.createProject(project);
-		
-		return new ResponseEntity<>(savedProject,HttpStatus.OK);
-		
+	public ResponseEntity<?> createProject(@RequestBody Project project){
+
+		Project savedProject= null;
+		try {
+			savedProject = projectService.createProject(project);
+			return new ResponseEntity<>(savedProject,HttpStatus.OK);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred: " + e.getMessage());
+		}
 	}
    
 	@PutMapping("/update")
-	public ResponseEntity<Project> updateProject( @RequestBody Project  project) {
-		Project updateProject=projectService.updateProject( project);
-		return  new ResponseEntity<>(updateProject,HttpStatus.OK) ;
+	public ResponseEntity<?> updateProject( @RequestBody Project  project) {
+		Project updateProject= null;
+		try {
+			updateProject = projectService.updateProject( project);
+			return  new ResponseEntity<>(updateProject,HttpStatus.OK) ;
+		} catch (Exception e) {
+			return   ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Project Name Already Exists");
+		}
 	}
 	
 	@GetMapping("/getProject/{id}")

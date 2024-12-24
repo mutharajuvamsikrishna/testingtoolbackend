@@ -43,7 +43,7 @@ public class RunConfigServiceImpl implements RunConfigService {
             if(runConfig.isScheduleExecution()){
 
                 TestRun testRun=testRunRepo.findById(runConfig1.get().getTestRunId()).get();
-                System.out.println(testRun);
+
                 testRun.setStatus("Scheduled");
                 testRunRepo.save(testRun);
             }
@@ -129,8 +129,7 @@ public class RunConfigServiceImpl implements RunConfigService {
 
     @Scheduled(fixedRate = 60000) // Check every 10 seconds
     public void executeScheduledRuns() {
-        System.out.println("Started ===============");
-        LocalDateTime now = LocalDateTime.now();
+        System.out.println("Started ===============");       LocalDateTime now = LocalDateTime.now();
 
         List<RunConfig> scheduledRuns = runConfigRepo.findByScheduleExecutionTrue();
 
@@ -143,7 +142,7 @@ public class RunConfigServiceImpl implements RunConfigService {
 
                 // Check if the scheduled time is within 1 second of the current time
                 if (Duration.between(scheduledDateTime, now).abs().getSeconds() <= 60000) {
-                    System.out.println("Test Execution Started at Scheduled Time");
+
                     runConfig.setScheduleExecution(false);
                     runConfigRepo.save(runConfig);
                     executeRun(runConfig);
@@ -158,6 +157,6 @@ public class RunConfigServiceImpl implements RunConfigService {
         } catch (Exception e) {
             throw new ResourceNotFoundException(e.getMessage());
         }
-        System.out.println("Executing test run with ID: " + runConfig.getTestRunId());
+
     }
 }
