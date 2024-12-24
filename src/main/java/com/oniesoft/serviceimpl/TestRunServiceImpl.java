@@ -335,7 +335,9 @@ public class TestRunServiceImpl implements TestRunService {
                 TestRunAndCase updatedTestRunAndCase = testRunAndCaseRepo.save(existingTestRunAndCase);
                 List<TestRunAndCase> testRunAndCases = testRunAndTestCaseRepo.findTestCasesByTestRunId(testResultDto.getTestRunId());
                 boolean allComplete = testRunAndCases.stream()
-                        .allMatch(tc -> List.of("Pass", "Fail", "Skip").contains(tc.getStatus()));
+                        .allMatch(tc -> List.of("Pass", "Fail", "Skip").stream()
+                                .anyMatch(status -> status.equalsIgnoreCase(tc.getStatus())));
+
                 boolean anyInProgress = testRunAndCases.stream()
                         .anyMatch(tc -> "In Progress".equalsIgnoreCase(tc.getStatus()));
 
