@@ -21,7 +21,6 @@ public class TestRun {
     private int testCaseCount;
     private String status;
     private String createdBy;
-    private int userId;
     private String startedBy;
     private LocalDateTime startedAt;
     private LocalDateTime createdAt;

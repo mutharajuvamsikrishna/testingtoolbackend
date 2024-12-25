@@ -17,10 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,10 +126,8 @@ public class RunConfigServiceImpl implements RunConfigService {
 
     @Scheduled(fixedRate = 60000) // Check every 10 seconds
     public void executeScheduledRuns() {
-        System.out.println("Started ===============");       LocalDateTime now = LocalDateTime.now();
-
+        LocalDateTime now = LocalDateTime.now();
         List<RunConfig> scheduledRuns = runConfigRepo.findByScheduleExecutionTrue();
-
         for (RunConfig runConfig : scheduledRuns) {
             if (runConfig.getScheduledDate() != null && runConfig.getScheduledTime() != null) {
                 LocalDateTime scheduledDateTime = LocalDateTime.of(
@@ -153,7 +148,7 @@ public class RunConfigServiceImpl implements RunConfigService {
 
     private void executeRun(RunConfig runConfig) {
         try {
-            testRunService.integrateTestCasesWithTestingTool(runConfig.getTestRunId());
+            testRunService.integrateTestCasesWithTestingTool(runConfig.getTestRunId(),runConfig.getUserId());
         } catch (Exception e) {
             throw new ResourceNotFoundException(e.getMessage());
         }

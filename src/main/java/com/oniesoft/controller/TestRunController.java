@@ -68,11 +68,11 @@ public class TestRunController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/run/{testRunId}")
-    public ResponseEntity<String> runTestCases(@PathVariable int testRunId) {
+    @PostMapping("/run/{testRunId}/{userId}")
+    public ResponseEntity<String> runTestCases(@PathVariable int testRunId,@PathVariable int userId) {
         try {
             // Call the service method to integrate test cases with the testing tool
-            String response = testRunService.integrateTestCasesWithTestingTool(testRunId);
+            String response = testRunService.integrateTestCasesWithTestingTool(testRunId,userId);
             return ResponseEntity.ok(response); // Return successful response
         } catch (IllegalStateException e) {
 

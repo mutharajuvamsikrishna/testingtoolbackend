@@ -232,7 +232,7 @@ public class TestRunServiceImpl implements TestRunService {
 
 
     @Override
-    public String integrateTestCasesWithTestingTool(int testRunId) throws Exception {
+    public String integrateTestCasesWithTestingTool(int testRunId,int userId) throws Exception {
         // Step 1: Fetch TestRun
         Optional<TestRun> testRunOptional = testRunRepo.findById(testRunId);
         if (testRunOptional.isEmpty()) {
@@ -256,7 +256,7 @@ public class TestRunServiceImpl implements TestRunService {
         String automationIds = testRunAndCases.stream().map(testCase -> String.valueOf(testCase.getAutomationId())).collect(Collectors.joining(","));
 
         // Step 4: Fetch Project Details
-        Optional<UserConfig> userConfig = userConfigRepo.findByProjectIdAndUserId(testRun.getProjectId(),testRun.getUserId());
+        Optional<UserConfig> userConfig = userConfigRepo.findByProjectIdAndUserId(testRun.getProjectId(),userId);
         if (userConfig.isEmpty() || userConfig.get().getProjectPath() == null) {
             throw new ResourceNotFoundException("Project Directory Not Found for project ID: " + testRun.getProjectId());
         }
@@ -367,7 +367,6 @@ public class TestRunServiceImpl implements TestRunService {
         TestRun testRunNew = new TestRun();
         testRunNew.setTestRunName(testRunName.get("testRunName"));
         testRunNew.setCreatedBy(testRunOld.get().getCreatedBy());
-        testRunNew.setUserId(testRunOld.get().getUserId());
         testRunNew.setProjectId(testRunOld.get().getProjectId());
         TestRun testRun = this.createTestRun(testRunNew);
         List<String> caseIds = testCasesByTestRunId.stream().map(TestRunAndCase::getAutomationId).toList();
